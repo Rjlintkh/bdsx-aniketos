@@ -1,2 +1,3 @@
-# bdsx-Aniketos
-A basic anti-cheat for BDSX
+
+# Aniketos Plugin
+A WIP anti-cheat for bdsx

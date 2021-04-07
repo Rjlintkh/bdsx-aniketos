@@ -1,0 +1,24 @@
+import { Actor, RawTypeId } from "bdsx";
+import { Player } from "bdsx/bds/player";
+import { SYMOPT_UNDNAME } from "bdsx/common";
+import { NativePointer, pdb, VoidPointer } from "bdsx/core";
+import { ProcHacker } from "bdsx/prochacker";
+
+import * as path from "path";
+
+pdb.setOptions(SYMOPT_UNDNAME);
+const hacker = ProcHacker.load(path.join(__dirname, "pdbcache.ini"), [
+    "EnchantmentInstance::EnchantmentInstance",
+    "Mob::isSprinting",
+]);
+pdb.setOptions(0);
+pdb.close();
+
+export const Mob$isSprinting = hacker.js("Mob::isSprinting", RawTypeId.Boolean, null, Actor);
+
+{
+    // let hook = hacker.hooking("EnchantmentInstance::EnchantmentInstance", RawTypeId.Void, null, NativePointer, NativePointer, RawTypeId.Int32)((instance: NativePointer, type: NativePointer, level: number) => {
+    //     console.log("ench", level);
+    //     hook(instance, type, level);
+    // });
+}
