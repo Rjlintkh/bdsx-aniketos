@@ -1,5 +1,5 @@
-import { bedrockServer, MinecraftPacketIds, nethook, NetworkIdentifier } from "bdsx";
 import { events } from "bdsx/event";
+import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
 import { cheats, punish } from "./punish";
 
 const bps = new Map<NetworkIdentifier, number[]>();
@@ -30,10 +30,10 @@ events.blockDestroy.on(ev => {
     } catch { }
 });
 
-NetworkIdentifier.close.on(ni => {
+events.networkDisconnected.on(ni => {
     bps.delete(ni);
 });
 
-bedrockServer.close.on(() => {
+events.serverClose.on(() => {
     clearInterval(interval);
 });

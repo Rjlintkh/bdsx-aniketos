@@ -1,4 +1,6 @@
-import { bedrockServer, MinecraftPacketIds, nethook, NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 import { cheats, punish } from "./punish";
 
 const cps = new Map<NetworkIdentifier, number[]>();
@@ -23,7 +25,7 @@ const interval = setInterval(() => {
     }
 }, 1000);
 
-nethook.before(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
+events.packetBefore(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
     if (pk.sound === 42 && !pk.disableRelativeVolume) {
         if (!cps.get(ni)) {
             cps.set(ni, new Array<number>());
@@ -32,11 +34,11 @@ nethook.before(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
     }
 });
 
-NetworkIdentifier.close.on(ni => {
+events.networkDisconnected.on(ni => {
     cps.delete(ni);
     warns.delete(ni);
 });
 
-bedrockServer.close.on(() => {
+events.serverClose.on(() => {
     clearInterval(interval);
 });
