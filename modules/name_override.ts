@@ -6,7 +6,9 @@ import { cheats, punish } from "./punish";
 const names = new Map<NetworkIdentifier, string>();
 
 events.packetAfter(MinecraftPacketIds.Login).on((pk, ni) => {
-    let cert = pk.connreq.cert;
+    let connreq = pk.connreq;
+    if (!connreq) return;
+    let cert = connreq.cert;
     names.set(ni, cert.getIdentityName());
 });
 
