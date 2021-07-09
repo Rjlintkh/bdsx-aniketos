@@ -1,8 +1,9 @@
-import { MinecraftPacketIds, nethook } from "bdsx";
 import { Player } from "bdsx/bds/player";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 import { cheats, punish } from "./punish";
 
-nethook.before(MinecraftPacketIds.Interact).on((pk, ni) => {
+events.packetBefore(MinecraftPacketIds.Interact).on((pk, ni) => {
     if (pk.action === 4) {
         let playerPos = ni.getActor()!.as(Player).getPosition();
         let targetPos = pk.pos;

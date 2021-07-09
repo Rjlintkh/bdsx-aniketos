@@ -1,14 +1,18 @@
-import { MinecraftPacketIds, nethook, NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 import { cheats, punish } from "./punish";
 
 const names = new Map<NetworkIdentifier, string>();
 
-nethook.after(MinecraftPacketIds.Login).on((pk, ni) => {
-    let cert = pk.connreq.cert;
+events.packetAfter(MinecraftPacketIds.Login).on((pk, ni) => {
+    let connreq = pk.connreq;
+    if (!connreq) return;
+    let cert = connreq.cert;
     names.set(ni, cert.getIdentityName());
 });
 
-nethook.send(MinecraftPacketIds.PlayStatus).on((pk, ni) => {
+events.packetSend(MinecraftPacketIds.PlayStatus).on((pk, ni) => {
     if (pk.status === 3) {
         if (ni.getActor()!.getName() !== names.get(ni)) {
             punish(ni, cheats.NameOverride);
@@ -16,6 +20,6 @@ nethook.send(MinecraftPacketIds.PlayStatus).on((pk, ni) => {
     }
 });
 
-NetworkIdentifier.close.on(ni => {
+events.networkDisconnected.on(ni => {
     names.delete(ni);
 });

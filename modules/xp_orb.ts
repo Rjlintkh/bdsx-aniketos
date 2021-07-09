@@ -1,6 +1,7 @@
-import { MinecraftPacketIds, nethook, serverInstance } from "bdsx";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 import { cheats, punish } from "./punish";
 
-nethook.before(MinecraftPacketIds.SpawnExperienceOrb).on((pk, ni) => {
+events.packetBefore(MinecraftPacketIds.SpawnExperienceOrb).on((pk, ni) => {
     punish(ni, cheats.XpOrb);
 });

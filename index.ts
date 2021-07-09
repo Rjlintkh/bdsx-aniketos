@@ -1,8 +1,10 @@
-import { bedrockServer, MinecraftPacketIds, nethook } from "bdsx";
+//import { bedrockServer, MinecraftPacketIds, nethook } from "bdsx";
+
+import { events } from "../bdsx/event";
 
 console.log("Thanks for using Aniketos");
 
-bedrockServer.open.on(() => {
+events.serverOpen.on(() => {
     import("./modules");
     //import("./symbols");
     /*

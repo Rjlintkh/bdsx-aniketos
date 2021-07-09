@@ -1,6 +1,7 @@
-import { MinecraftPacketIds, nethook } from "bdsx";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 
-nethook.before(MinecraftPacketIds.PlayerAuthInput).on((pk, ni) => {
+events.packetBefore(MinecraftPacketIds.PlayerAuthInput).on((pk, ni) => {
     // console.log("AUTH", {
     //     pitch: pk.pitch,
     //     yaw: pk.yaw,

@@ -1,4 +1,5 @@
-import { nethook, MinecraftPacketIds } from "bdsx";
+import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
+import { events } from "../../bdsx/event";
 import "./autoclicker";
 import "./edition_faker";
 import "./flight";
@@ -25,7 +26,7 @@ for (let i = 1; i < 164; i++) {
         case MinecraftPacketIds.SetTime:
             continue;
     }
-    nethook.before(i).on((pk, ni) => {
+    events.packetBefore(i).on((pk, ni) => {
         //console.log(MinecraftPacketIds[i], new Date());
     })
     // nethook.send(i).on((pk, ni) => {
