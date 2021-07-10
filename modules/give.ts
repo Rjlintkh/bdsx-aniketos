@@ -1,11 +1,13 @@
 import { hex } from "bdsx/util";
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 import { cheats, punish } from "./punish";
+import { CANCEL } from "bdsx/common";
 
 events.packetRaw(MinecraftPacketIds.InventoryTransaction).on((ptr, size, ni) => {
     if (hex(ptr.readBuffer(size)).slice(6, 14) === "01 1C 01") {
         punish(ni, cheats.Give);
+        return CANCEL;
     }
 });
 
