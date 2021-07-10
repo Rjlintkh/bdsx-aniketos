@@ -1,5 +1,6 @@
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+/*
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 
 events.packetBefore(MinecraftPacketIds.PlayerAuthInput).on((pk, ni) => {
     // console.log("AUTH", {
@@ -17,3 +18,4 @@ events.packetBefore(MinecraftPacketIds.PlayerAuthInput).on((pk, ni) => {
     //     delta: pk.delta,
     // });
 });
+*/
