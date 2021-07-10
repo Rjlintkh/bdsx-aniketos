@@ -26,3 +26,6 @@ A WIP anti-cheat for bdsx
 - Horion
 - [x] InstaBreak
 - [x] EditionFaker
+- [x] Enchant
+- [x] Give
+- [x] Dupe
