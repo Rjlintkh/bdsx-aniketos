@@ -1,9 +1,9 @@
 import { ActorWildcardCommandSelector } from "bdsx/bds/command";
 import { command } from "bdsx/command";
 import { CxxString } from "bdsx/nativetype";
-import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
-import { serverInstance } from "../../bdsx/bds/server";
-import { ServerPlayer } from "../../bdsx/bds/player";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { serverInstance } from "bdsx/bds/server";
+import { ServerPlayer } from "bdsx/bds/player";
 
 export enum cheats {
     AutoClicker = "Auto Clicker",

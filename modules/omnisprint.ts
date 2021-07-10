@@ -1,5 +1,5 @@
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 import { Mob$isSprinting } from "../symbols";
 import { cheats, punish } from "./punish";
 

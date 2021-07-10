@@ -1,9 +1,9 @@
 import { events } from "bdsx/event";
-import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { cheats, punish } from "./punish";
 
 const bps = new Map<NetworkIdentifier, number[]>();
-const interval = setInterval(() => {
+setInterval(() => {
     let now = new Date().getTime();
     for (let [ni, clicks] of bps) {
         for (let time of clicks) {
@@ -15,7 +15,7 @@ const interval = setInterval(() => {
             punish(ni, cheats.Nuker);
         }
     }
-}, 1000);
+}, 1000).unref();
 
 events.blockDestroy.on(ev => {
     try {
@@ -32,8 +32,4 @@ events.blockDestroy.on(ev => {
 
 events.networkDisconnected.on(ni => {
     bps.delete(ni);
-});
-
-events.serverClose.on(() => {
-    clearInterval(interval);
 });

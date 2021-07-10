@@ -1,6 +1,6 @@
-import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 import { cheats, punish } from "./punish";
 
 const names = new Map<NetworkIdentifier, string>();

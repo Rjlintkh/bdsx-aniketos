@@ -1,11 +1,11 @@
-import { NetworkIdentifier } from "../../bdsx/bds/networkidentifier";
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 import { cheats, punish } from "./punish";
 
 const cps = new Map<NetworkIdentifier, number[]>();
 const warns = new Map<NetworkIdentifier, number>();
-const interval = setInterval(() => {
+setInterval(() => {
     let now = new Date().getTime();
     for (let [ni, clicks] of cps) {
         for (let time of clicks) {
@@ -23,7 +23,7 @@ const interval = setInterval(() => {
             warns.set(ni, 0);
         }
     }
-}, 1000);
+}, 1000).unref();
 
 events.packetBefore(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
     if (pk.sound === 42 && !pk.disableRelativeVolume) {
@@ -37,8 +37,4 @@ events.packetBefore(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
 events.networkDisconnected.on(ni => {
     cps.delete(ni);
     warns.delete(ni);
-});
-
-events.serverClose.on(() => {
-    clearInterval(interval);
 });
