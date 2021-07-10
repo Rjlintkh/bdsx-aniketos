@@ -1,22 +1,17 @@
-//import { bedrockServer, MinecraftPacketIds, nethook } from "bdsx";
+import { events } from "bdsx/event";
 
-import { events } from "../bdsx/event";
-
-console.log("Thanks for using Aniketos");
+console.log("      ___           ___                       ___           ___                       ___           ___     ".red);
+console.log("     /  /\\         /__/\\        ___          /__/|         /  /\\          ___        /  /\\         /  /\\    ".red);
+console.log("    /  /::\\        \\  \\:\\      /  /\\        |  |:|        /  /:/_        /  /\\      /  /::\\       /  /:/_   ".red);
+console.log("   /  /:/\\:\\        \\  \\:\\    /  /:/        |  |:|       /  /:/ /\\      /  /:/     /  /:/\\:\\     /  /:/ /\\  ".red);
+console.log("  /  /:/~/::\\   _____\\__\\:\\  /__/::\\      __|  |:|      /  /:/ /:/_    /  /:/     /  /:/  \\:\\   /  /:/ /::\\ ".red);
+console.log(" /__/:/ /:/\\:\\ /__/::::::::\\ \\__\\/\\:\\__  /__/\\_|:|____ /__/:/ /:/ /\\  /  /::\\    /__/:/ \\__\\:\\ /__/:/ /:/\\:\\".red);
+console.log(" \\  \\:\\/:/__\\/ \\  \\:\\~~\\~~\\/    \\  \\:\\/\\ \\  \\:\\/:::::/ \\  \\:\\/:/ /:/ /__/:/\\:\\   \\  \\:\\ /  /:/ \\  \\:\\/:/~/:/".red);
+console.log("  \\  \\::/       \\  \\:\\  ~~~      \\__\\::/  \\  \\::/~~~~   \\  \\::/ /:/  \\__\\/  \\:\\   \\  \\:\\  /:/   \\  \\::/ /:/ ".red);
+console.log("   \\  \\:\\        \\  \\:\\          /__/:/    \\  \\:\\        \\  \\:\\/:/        \\  \\:\\   \\  \\:\\/:/     \\__\\/ /:/  ".red);
+console.log("    \\  \\:\\        \\  \\:\\         \\__\\/      \\  \\:\\        \\  \\::/          \\__\\/    \\  \\::/        /__/:/   ".red);
+console.log("     \\__\\/         \\__\\/                     \\__\\/         \\__\\/                     \\__\\/         \\__\\/    ".red);
 
 events.serverOpen.on(() => {
     import("./modules");
-    //import("./symbols");
-    /*
-    nethook.before(MinecraftPacketIds.AdventureSettings).on((pk, ni) => {
-        console.log("AdvStg", {
-            flag1: pk.flag1,
-            flag2: pk.flag2,
-            customFlag: pk.customFlag,
-            commandPerm: pk.commandPermission,
-            playerPerm: pk.playerPermission,
-            uniId: pk.actorId,
-        });
-    });
-    */
 });
