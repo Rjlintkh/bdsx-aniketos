@@ -1,6 +1,7 @@
-import { MinecraftPacketIds } from "../../bdsx/bds/packetids";
-import { events } from "../../bdsx/event";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { events } from "bdsx/event";
 import "./autoclicker";
+import { DEBUG } from "./debug";
 import "./edition_faker";
 import "./flight";
 import "./give";
@@ -13,23 +14,26 @@ import "./nuker";
 import "./reach";
 import "./xp_orb";
 
-for (let i = 1; i < 164; i++) {
-    switch (i) {
-        case MinecraftPacketIds.MovePlayer:
-        case MinecraftPacketIds.PlayerAuthInput:
-        case MinecraftPacketIds.ClientCacheBlobStatus:
-        case MinecraftPacketIds.ClientCacheMissResponse:
-        case MinecraftPacketIds.LevelChunk:
-        case MinecraftPacketIds.LevelSoundEvent:
-        case MinecraftPacketIds.MoveActorDelta:
-        case MinecraftPacketIds.NetworkChunkPublisherUpdate:
-        case MinecraftPacketIds.SetTime:
-            continue;
+if (DEBUG) {
+    for (let i = 1; i < 164; i++) {
+        switch (i) {
+            //case MinecraftPacketIds.MovePlayer:
+            case MinecraftPacketIds.PlayerAuthInput:
+            case MinecraftPacketIds.ClientCacheBlobStatus:
+            case MinecraftPacketIds.ClientCacheMissResponse:
+            case MinecraftPacketIds.LevelChunk:
+            case MinecraftPacketIds.LevelSoundEvent:
+            case MinecraftPacketIds.MoveActorDelta:
+            case MinecraftPacketIds.SetActorData:
+            case MinecraftPacketIds.NetworkChunkPublisherUpdate:
+            case MinecraftPacketIds.SetTime:
+                continue;
+        }
+        events.packetBefore(i).on((pk, ni) => {
+            console.log("RECV", MinecraftPacketIds[i], new Date());
+        });
+        events.packetSend(i).on((pk, ni) => {
+            //console.log("SEND", MinecraftPacketIds[i], new Date());
+        });
     }
-    events.packetBefore(i).on((pk, ni) => {
-        //console.log(MinecraftPacketIds[i], new Date());
-    })
-    // nethook.send(i).on((pk, ni) => {
-    //     console.log(MinecraftPacketIds[i], new Date());
-    // })
 }
