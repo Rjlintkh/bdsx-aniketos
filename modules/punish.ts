@@ -1,12 +1,13 @@
 import { ActorWildcardCommandSelector } from "bdsx/bds/command";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { ServerPlayer } from "bdsx/bds/player";
+import { serverInstance } from "bdsx/bds/server";
 import { command } from "bdsx/command";
 import { CxxString } from "bdsx/nativetype";
-import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { serverInstance } from "bdsx/bds/server";
-import { ServerPlayer } from "bdsx/bds/player";
 
 export enum cheats {
     AutoClicker = "Auto Clicker",
+    Crasher = "Crasher",
     EditionFaker = "Fake Platform",
     Flight = "Flight",
     Give = "Illegal Item Giving",

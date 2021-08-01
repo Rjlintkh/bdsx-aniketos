@@ -1,5 +1,5 @@
-import { Player } from "bdsx/bds/player";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { Player } from "bdsx/bds/player";
 import { events } from "bdsx/event";
 import { cheats, punish } from "./punish";
 

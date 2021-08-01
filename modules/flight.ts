@@ -1,8 +1,8 @@
-import { Player } from "bdsx/bds/player";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { PlayerActionPacket } from "bdsx/bds/packets";
+import { Player } from "bdsx/bds/player";
 import { events } from "bdsx/event";
 import { cheats, punish } from "./punish";
-import { PlayerActionPacket } from "bdsx/bds/packets";
 
 events.packetBefore(MinecraftPacketIds.AdventureSettings).on((pk, ni) => {
     if (pk.flag1 === 0x260 && pk.flag2 < 0x1BF) {

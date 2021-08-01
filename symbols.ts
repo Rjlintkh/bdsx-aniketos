@@ -1,12 +1,11 @@
 //import { Actor, RawTypeId } from "bdsx";
-import { Player } from "bdsx/bds/player";
-import { NativePointer, pdb, VoidPointer } from "bdsx/core";
+import { Actor } from "bdsx/bds/actor";
+import { pdb } from "bdsx/core";
+import { UNDNAME_NAME_ONLY } from "bdsx/dbghelp";
+import { bool_t } from "bdsx/nativetype";
 import { ProcHacker } from "bdsx/prochacker";
-
 import * as path from "path";
-import { Actor } from "../bdsx/bds/actor";
-import { UNDNAME_NAME_ONLY } from "../bdsx/dbghelp";
-import { bool_t } from "../bdsx/nativetype";
+
 
 const hacker = ProcHacker.load(path.join(__dirname, "pdbcache.ini"), [
     "EnchantmentInstance::EnchantmentInstance",
