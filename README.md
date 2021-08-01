@@ -32,3 +32,4 @@ A WIP anti-cheat for bdsx
 
 - Zephyr
 - [x] Crasher
+- [x] XP
