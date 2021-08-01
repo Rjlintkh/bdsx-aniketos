@@ -7,7 +7,7 @@ import { pdb } from "bdsx/core";
 import { UNDNAME_NAME_ONLY } from "bdsx/dbghelp";
 import { Event } from "bdsx/eventtarget";
 import { nativeClass, NativeClass, nativeField } from "bdsx/nativeclass";
-import { bool_t, uint32_t, void_t } from "bdsx/nativetype";
+import { bool_t, void_t } from "bdsx/nativetype";
 import { ProcHacker } from "bdsx/prochacker";
 import * as path from "path";
 
@@ -108,8 +108,6 @@ export enum PlayerAuthInputPacket$InputData {
 }
 
 export const Mob$isSprinting = hacker.js("Mob::isSprinting", bool_t, null, Actor);
-export const PlayerAuthInputPacket$getInput = hacker.js("PlayerAuthInputPacket::getInput", bool_t, null, PlayerAuthInputPacket, uint32_t);
-//export const ServerMoveInputHandler$digestPlayerInputPacket = hacker.js("ServerMoveInputHandler::digestPlayerInputPacket", void_t, null, ServerMoveInputHandler, PlayerAuthInputPacket);
 const PlayerAuthInputMap = new Map<string, ServerPlayer>();
 export const PlayerAuthInputEvent = new Event<(res: ServerMoveInputHandler, pk: PlayerAuthInputPacket, p: ServerPlayer)=>void>();
 
