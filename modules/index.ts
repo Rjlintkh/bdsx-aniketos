@@ -1,3 +1,4 @@
+import { Packet } from "bdsx/bds/packet";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
 import "./autoclicker";
@@ -32,7 +33,11 @@ if (DEBUG) {
             case MinecraftPacketIds.SetTime:
                 continue;
         }
-        events.packetBefore(i).on((pk, ni) => {
+        events.packetBefore(i).on((pk: Packet, ni) => {
+            if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
+                console.log("RECV", "Inv Tran", new Date());
+                return;
+            }
             console.log("RECV", pk, new Date());
         });
         events.packetSend(i).on((pk, ni) => {
