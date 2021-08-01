@@ -7,6 +7,7 @@ import "./edition_faker";
 import "./flight";
 import "./give";
 import "./instabreak";
+import "./inv_move";
 import "./movement";
 import "./name_override";
 import "./noclip";
@@ -19,7 +20,7 @@ if (DEBUG) {
     for (let i = 1; i < 164; i++) {
         switch (i) {
             //case MinecraftPacketIds.MovePlayer:
-            //case MinecraftPacketIds.PlayerAuthInput:
+            case MinecraftPacketIds.PlayerAuthInput:
             case MinecraftPacketIds.ClientCacheBlobStatus:
             case MinecraftPacketIds.ClientCacheMissResponse:
             case MinecraftPacketIds.LevelChunk:

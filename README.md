@@ -31,5 +31,13 @@ A WIP anti-cheat for bdsx
 - [x] Dupe
 
 - Zephyr
-- [x] Crasher
+- [ ] Instabreak
 - [x] XP
+- [x] Crasher
+- [x] RapidHit
+- [x] MineplexFly
+- [x] HiveFly
+- [ ] CCFly
+- [ ] Jetpack
+- [ ] BlockFly
+- [ ] BlinkFly

@@ -1,6 +1,6 @@
-import { events } from "bdsx/event";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { cheats, punish } from "./punish";
+import { events } from "bdsx/event";
+import { Cheats, punish } from "./punish";
 
 const bps = new Map<NetworkIdentifier, number[]>();
 setInterval(() => {
@@ -12,7 +12,7 @@ setInterval(() => {
             }
         }
         if (clicks.length >= 18) {
-            punish(ni, cheats.Nuker);
+            punish(ni, Cheats.Nuker);
         }
     }
 }, 1000).unref();

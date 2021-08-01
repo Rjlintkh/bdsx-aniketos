@@ -1,15 +1,15 @@
-import { hex } from "bdsx/util";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
-import { events } from "bdsx/event";
-import { cheats, punish } from "./punish";
 import { CANCEL } from "bdsx/common";
+import { events } from "bdsx/event";
+import { hex } from "bdsx/util";
 import { DEBUG } from "./debug";
+import { Cheats, punish } from "./punish";
 
 events.packetRaw(MinecraftPacketIds.InventoryTransaction).on((ptr, size, ni) => {
     let data = hex(ptr.readBuffer(size));
     if (data.slice(9, 23) === "02 9F 8D 06 09" || data.slice(21, 35) === "02 9F 8D 06 09") {
         if (DEBUG) console.log(data);
-        punish(ni, cheats.Give);
+        punish(ni, Cheats.Give);
         return CANCEL;
     }
 });

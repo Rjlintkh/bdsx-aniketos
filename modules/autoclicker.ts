@@ -1,7 +1,7 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
-import { cheats, punish } from "./punish";
+import { Cheats, punish } from "./punish";
 
 const cps = new Map<NetworkIdentifier, number[]>();
 const warns = new Map<NetworkIdentifier, number>();
@@ -17,7 +17,7 @@ setInterval(() => {
             let warn = (warns.get(ni) ?? 0) + 1;
             warns.set(ni, warn);
             if (warn > 2) {
-                punish(ni, cheats.AutoClicker);
+                punish(ni, Cheats.AutoClicker);
             }
         } else {
             warns.set(ni, 0);

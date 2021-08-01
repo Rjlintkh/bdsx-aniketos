@@ -1,7 +1,7 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
-import { cheats, punish } from "./punish";
+import { Cheats, punish } from "./punish";
 
 const names = new Map<NetworkIdentifier, string>();
 
@@ -15,7 +15,7 @@ events.packetAfter(MinecraftPacketIds.Login).on((pk, ni) => {
 events.packetSend(MinecraftPacketIds.PlayStatus).on((pk, ni) => {
     if (pk.status === 3) {
         if (ni.getActor()!.getName() !== names.get(ni)) {
-            punish(ni, cheats.NameOverride);
+            punish(ni, Cheats.NameOverride);
         }
     }
 });
