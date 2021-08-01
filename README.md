@@ -29,3 +29,6 @@ A WIP anti-cheat for bdsx
 - [x] Enchant
 - [x] Give
 - [x] Dupe
+
+- Zephyr
+- [x] Crasher
