@@ -6,8 +6,9 @@ import { DEBUG } from "./debug";
 import { Cheats, punish } from "./punish";
 
 events.packetRaw(MinecraftPacketIds.InventoryTransaction).on((ptr, size, ni) => {
-    let data = hex(ptr.readBuffer(size));
-    if (data.slice(9, 23) === "02 9F 8D 06 09" || data.slice(21, 35) === "02 9F 8D 06 09") {
+    let data = hex(ptr.readBuffer(40));
+    const match = "02 9F 8D 06 09";
+    if (data.slice(9, 23) === match || data.slice(21, 35) === match) {
         if (DEBUG) console.log(data);
         punish(ni, Cheats.Give);
         return CANCEL;
