@@ -33,7 +33,7 @@ if (DEBUG) {
             case MinecraftPacketIds.SetTime:
                 continue;
         }
-        events.packetBefore(i).on((pk: Packet, ni) => {
+        events.packetAfter(i).on((pk: Packet, ni) => {
             if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
                 console.log("RECV", "Inv Tran", new Date());
                 return;
