@@ -1,22 +1,22 @@
 {
-  "name": "@bdsx/aniketos",
-  "version": "1.0.0",
-  "description": "A basic anti-cheat",
-  "main": "index.js",
-  "keywords": [],
-  "author": {
-    "name": "PneuJai"
-  },
-  "license": "ISC",
-  "bdsxPlugin": true,
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "prepare": "tsc || exit 0"
-  },
-  "devDependencies": {
-    "bdsx": "file:../../bdsx",
-    "@types/node": "^12.20.5",
-    "typescript": "^4.2.3"
-  }
+	"name": "@bdsx/aniketos",
+	"version": "1.0.1",
+	"description": "A basic anti-cheat",
+	"main": "index.js",
+	"keywords": [],
+	"author": {
+		"name": "PneuJai"
+	},
+	"license": "ISC",
+	"bdsxPlugin": true,
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w",
+		"prepare": "tsc || exit 0"
+	},
+	"devDependencies": {
+		"bdsx": "file:../bdsx",
+		"@types/node": "^12.20.5",
+		"typescript": "^4.2.3"
+	}
 }
