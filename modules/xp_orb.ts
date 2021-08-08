@@ -1,4 +1,3 @@
-import { ContainerType } from "bdsx/bds/inventory";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { CANCEL } from "bdsx/common";
@@ -8,10 +7,10 @@ import { Cheats, punish } from "./punish";
 const lock = new Map<NetworkIdentifier, boolean>();
 events.packetSend(MinecraftPacketIds.ContainerOpen).on((pk, ni) => {
 	if (
-		pk.type === ContainerType.BlastFurnace ||
-		pk.type === ContainerType.Furnace ||
-		pk.type === ContainerType.Smoker ||
-		pk.type === ContainerType.Grindstone
+		pk.type === /* ContainerType.BlastFurnace */ 27 ||
+		pk.type === /* ContainerType.Furnace */ 2 ||
+		pk.type === /* ContainerType.Smoker */ 28 ||
+		pk.type === /* ContainerType.Grindstone */ 26
 	) {
 		lock.set(ni, true);
 	}

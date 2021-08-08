@@ -17,6 +17,7 @@ import "./nuker";
 import "./reach";
 import "./xp_orb";
 
+/* for debugging only */
 if (DEBUG) {
     for (let i = 1; i < 164; i++) {
         switch (i) {
