@@ -1,12 +1,10 @@
 {
 	"name": "@bdsx/aniketos",
-	"version": "1.0.1",
+	"version": "1.0.6",
 	"description": "A basic anti-cheat",
 	"main": "index.js",
 	"keywords": [],
-	"author": {
-		"name": "PneuJai"
-	},
+  "author": "PneuJai",
 	"license": "ISC",
 	"bdsxPlugin": true,
 	"scripts": {
@@ -14,9 +12,7 @@
 		"watch": "tsc -w",
 		"prepare": "tsc || exit 0"
 	},
-	"devDependencies": {
-		"bdsx": "file:../bdsx",
-		"@types/node": "^12.20.5",
-		"typescript": "^4.2.3"
-	}
+  "devDependencies": {
+    "bdsx": "file:../bdsx"
+  }
 }
