@@ -32,6 +32,8 @@ if (DEBUG) {
             case MinecraftPacketIds.SetActorData:
             case MinecraftPacketIds.NetworkChunkPublisherUpdate:
             case MinecraftPacketIds.SetTime:
+            case MinecraftPacketIds.UpdateAttributes:
+            case MinecraftPacketIds.SetActorMotion:
                 continue;
         }
         events.packetAfter(i).on((pk: Packet, ni) => {
@@ -41,8 +43,11 @@ if (DEBUG) {
             }
             console.log("RECV", pk, new Date());
         });
-        events.packetSend(i).on((pk, ni) => {
-            //console.log("SEND", pk, new Date());
+        events.packetSend(i).on((pk: Packet, ni) => {
+            if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
+                return;
+            }
+            console.log("SEND", pk.getName(), new Date());
         });
     }
 }

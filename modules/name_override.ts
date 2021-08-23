@@ -1,5 +1,6 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { DeviceOS } from "bdsx/common";
 import { events } from "bdsx/event";
 import { Cheats, punish } from "./punish";
 
@@ -9,13 +10,17 @@ events.packetAfter(MinecraftPacketIds.Login).on((pk, ni) => {
     let connreq = pk.connreq;
     if (!connreq) return;
     let cert = connreq.cert;
-    names.set(ni, cert.getIdentityName());
+    if (connreq.getJsonValue().DeviceOS !== DeviceOS.PLAYSTATION) {
+        names.set(ni, cert.getIdentityName());
+    }
 });
 
 events.packetSend(MinecraftPacketIds.PlayStatus).on((pk, ni) => {
     if (pk.status === 3) {
-        if (ni.getActor()!.getName() !== names.get(ni)) {
-            punish(ni, Cheats.NameOverride);
+        if (names.get(ni)) {
+            if (ni.getActor()!.getName() !== names.get(ni)) {
+                punish(ni, Cheats.NameOverride);
+            }
         }
     }
 });
