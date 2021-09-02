@@ -3,6 +3,9 @@
 A WIP anti-cheat for bdsx
 
 ##### Current Features (1.17)
+- Omlet Arcade
+- [ ] Korean Kids Selling Aniketos
+
 - Toolbox
 - [x] Flying
 - [x] No-clip
