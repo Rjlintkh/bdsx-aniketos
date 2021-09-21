@@ -6,30 +6,30 @@ import { command } from "bdsx/command";
 import { CxxString } from "bdsx/nativetype";
 
 export enum Cheats {
-    AirSwim = "Air Swim",
-    AutoClicker = "Auto Clicker",
-    Crasher = "Crasher",
-    EditionFaker = "Fake Platform",
-    Flight = "Flight",
-    Give = "Illegal Item Giving",
-    InstaBreak = "Insta-break",
-    InvMove = "Inventory Move",
-    NameOverride = "Fake Name",
-    NoClip = "No-clip",
-    Nuker = "Nuker",
-    OmniSprint = "Omni-sprint",
-    Reach = "Reach",
+    AirSwim = "공중 점프",
+    AutoClicker = "비정상적인 터치속도",
+    Crasher = "크래셔",
+    EditionFaker = "가짜 플랫폼",
+    Flight = "플라이",
+    Give = "아이템 기브",
+    InstaBreak = "인스타 브레이크",
+    InvMove = "인벤토리 움직임",
+    NameOverride = "가짜 닉네임",
+    NoClip = "노클립",
+    Nuker = "너커",
+    OmniSprint = "옴니 프린트",
+    Reach = "비정상적인 리치",
     XpOrb = "Illegal Experience Orb Spawning",
 }
 
 export function punish(ni: NetworkIdentifier, cheat: Cheats): void {
-    serverInstance.disconnectClient(ni, `Kicked by §l§4Aniketos§r due to cheating: ${cheat}`);
+    serverInstance.disconnectClient(ni, `당신은 밴되었습니다! by §l§4Server§r due to cheating: ${cheat}`);
     // Add your own punishmenet here
-    console.log(`${"[Aniketos]".red} ${ni.getActor()?.getName()} was detected for: ${cheat}`);
+    console.log(`${"[Server]".red} ${ni.getActor()?.getName()} was detected for: ${cheat}`);
 }
 
 export function report(name: string, reason: string): void {
-    console.log(`${"[Aniketos]".red} ${name} was reported for: ${reason}`);
+    console.log(`${"[Server]".red} ${name} was reported for: ${reason}`);
 }
 
 command.register("report", "Reports a cheater").overload((param, origin, output) => {
