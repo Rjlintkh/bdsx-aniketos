@@ -1,0 +1,272 @@
+import { BlockPos, Facing, Vec3 } from "bdsx/bds/blockpos";
+import { InventorySourceType, ItemReleaseInventoryTransaction, ItemUseInventoryTransaction, ItemUseOnActorInventoryTransaction } from "bdsx/bds/inventory";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { CANCEL } from "bdsx/common";
+import { NativePointer } from "bdsx/core";
+import { events } from "bdsx/event";
+import { ModuleBase, ModuleConfig } from "./base";
+
+class InventoryTransactionChangedSlotsHack {
+    constructor(public containerId: number, public changedSlots: number[]) {
+        this.containerId = containerId;
+        this.changedSlots = changedSlots;
+    }
+
+    static read(ptr: NativePointer): InventoryTransactionChangedSlotsHack {
+        const containerId = ptr.readUint8();
+        const changedSlots = [];
+        for (let i = 0; i < ptr.readVarUint(); i++) {
+            changedSlots.push(ptr.readUint8());
+        }
+        return new InventoryTransactionChangedSlotsHack(containerId, changedSlots);
+    }
+}
+
+interface ItemStackLazy {
+    id: number;
+    meta: number;
+    count: number;
+    blockRuntimeId: number;
+    extraData: string;
+}
+
+function getItemStack(ptr: NativePointer, readExtraCrapInTheMiddle: Function): ItemStackLazy | null {
+    const id = ptr.readVarInt();
+    if (id === 0) {
+        return null;
+    }
+
+    const count = ptr.readUint16();
+    const meta = ptr.readVarUint();
+
+    readExtraCrapInTheMiddle(ptr);
+
+    const blockRuntimeId = ptr.readVarInt();
+    const extraData = ptr.readVarString(); // FUCK YOU
+    const item = {
+        id,
+        meta,
+        count,
+        blockRuntimeId,
+        extraData
+    };
+    return item;
+}
+
+class ItemStackWrapper {
+    constructor(public stackId: number, public itemStack: any) {
+        this.stackId = stackId;
+        this.itemStack = itemStack;
+    }
+
+    static read(ptr: NativePointer): ItemStackWrapper {
+        let stackId = 0;
+        const stack = getItemStack(ptr, (ptr: NativePointer) => {
+            const hasNetId = ptr.getBoolean();
+            if (hasNetId) {
+                stackId = ptr.readVarInt();
+            }
+        });
+        return new ItemStackWrapper(stackId, stack);
+    }
+}
+
+class NetworkInventoryAction {
+    sourceType: number;
+    windowId: number;
+    sourceFlags = 0;
+    inventorySlot: number;
+    oldItem: ItemStackWrapper;
+    newItem: ItemStackWrapper;
+    read(ptr: NativePointer): NetworkInventoryAction {
+        this.sourceType = ptr.readUint8();
+        switch (this.sourceType) {
+        case InventorySourceType.ContainerInventory:
+            this.windowId = ptr.readVarInt();
+            break;
+        case InventorySourceType.WorldInteraction:
+            this.sourceFlags = ptr.readVarUint();
+        case InventorySourceType.CreativeInventory:
+            break;
+        default:
+            throw new Error(`Unknown inventory action source type: ${this.sourceType}`);
+        }
+        this.inventorySlot = ptr.readVarUint();
+        this.oldItem = ItemStackWrapper.read(ptr);
+        this.newItem = ItemStackWrapper.read(ptr);
+        return this;
+    }
+}
+
+abstract class TransactionData {
+    public actions: NetworkInventoryAction[] = [];
+    
+    decode(ptr: NativePointer): void {
+        for (let i = 0; i < ptr.readVarUint(); i++) {
+            this.actions.push(new NetworkInventoryAction().read(ptr));
+        }
+        this.decodeData(ptr);
+    }
+
+    abstract decodeData(ptr: NativePointer): void;
+}
+
+class NormalTransactionData extends TransactionData {
+    constructor() {
+        super();
+    }
+
+    decodeData(ptr: NativePointer): void {
+    }
+}
+
+class MismatchTransactionData extends TransactionData {
+    constructor() {
+        super();
+    }
+
+    decodeData(ptr: NativePointer): void {
+        if (this.actions.length > 0) {
+            throw new Error(`Mismatch transaction type should not have any actions associated with it, but got ${this.actions.length}`);
+        }
+    }
+}
+
+class UseItemTransactionData extends TransactionData {
+    actionType: ItemUseInventoryTransaction.ActionType;
+    blockPosition: BlockPos;
+    face: Facing;
+    hotbarSlot: number;
+    itemInHand: ItemStackWrapper;
+    playerPosition: Vec3;
+    clickPosition: Vec3;
+    blockRuntimeId: number;
+
+    constructor() {
+        super();
+    }
+
+    decodeData(ptr: NativePointer): void {
+        this.actionType = ptr.readVarUint();
+        this.blockPosition = BlockPos.create(ptr.readVarInt(), ptr.readVarUint(), ptr.readVarInt());
+        this.face = ptr.readVarInt();
+        this.hotbarSlot = ptr.readVarInt();
+        if (1 === 1) return;
+        this.itemInHand = ItemStackWrapper.read(ptr);
+        this.playerPosition = Vec3.create(ptr.readFloat32(), ptr.readFloat32(), ptr.readFloat32());
+        this.clickPosition = Vec3.create(ptr.readFloat32(), ptr.readFloat32(), ptr.readFloat32());
+        this.blockRuntimeId = ptr.readVarUint();
+    }
+}
+
+class UseItemOnEntityTransactionData extends TransactionData {
+    actorRuntimeId: string;
+    actionType: ItemUseOnActorInventoryTransaction.ActionType;
+    hotbarSlot: number;
+    itemInHand: ItemStackWrapper;
+    playerPosition: Vec3;
+    clickPosition: Vec3;
+
+    constructor() {
+        super();
+    }
+
+    decodeData(ptr: NativePointer): void {
+        this.actorRuntimeId = ptr.readVarBin();
+        this.actionType = ptr.readVarUint();
+        this.hotbarSlot = ptr.readVarInt();
+        if (1 === 1) return;
+        this.itemInHand = ItemStackWrapper.read(ptr);
+        this.playerPosition = Vec3.create(ptr.readFloat32(), ptr.readFloat32(), ptr.readFloat32());
+        this.clickPosition = Vec3.create(ptr.readFloat32(), ptr.readFloat32(), ptr.readFloat32());
+    }
+}
+
+class ReleaseItemTransactionData extends TransactionData {
+    actionType: ItemReleaseInventoryTransaction.ActionType;
+    hotbarSlot: number;
+    itemInHand: ItemStackWrapper;
+    headPosition: Vec3;
+
+    constructor() {
+        super();
+    }
+
+    decodeData(ptr: NativePointer): void {
+        this.actionType = ptr.readVarUint();
+        this.hotbarSlot = ptr.readVarInt();
+        if (1 === 1) return;
+        this.itemInHand = ItemStackWrapper.read(ptr);
+        this.headPosition = Vec3.create(ptr.readFloat32(), ptr.readFloat32(), ptr.readFloat32());
+    }
+}
+
+export default class Give extends ModuleBase {
+    info(): void {
+        /**
+         * @name: Give
+         * @version: 1.0.0
+         * @description: Blocks Toolbox give and enchant.
+         */
+    }
+    
+    configModel = ModuleConfig;
+    load(): void {
+        const parser = 
+        this.listen(events.packetRaw(MinecraftPacketIds.InventoryTransaction), (ptr, size, ni) => {
+            const pk: {
+                requestId: number;
+                requestChangedSlots: InventoryTransactionChangedSlotsHack[];
+                transactionType: number;
+                trData: TransactionData;
+            } = {} as any;
+            ptr.move(1);
+            pk.requestId = ptr.readVarInt();
+            pk.requestChangedSlots = [];
+            if (pk.requestId !== 0) {
+                for (let i = 0; i < ptr.readVarUint(); i++) {
+                    pk.requestChangedSlots.push(InventoryTransactionChangedSlotsHack.read(ptr));
+                }
+            }
+            pk.transactionType = ptr.readVarUint();
+            // switch (pk.transactionType) {
+            // case ComplexInventoryTransaction.Type.NormalTransaction:
+            //     pk.trData = new NormalTransactionData();
+            //     return;
+            // case ComplexInventoryTransaction.Type.InventoryMismatch:
+            //     pk.trData = new MismatchTransactionData();
+            //     break;
+            // case ComplexInventoryTransaction.Type.ItemUseTransaction:
+            //     pk.trData = new UseItemTransactionData();
+            //     break;
+            // case ComplexInventoryTransaction.Type.ItemUseOnEntityTransaction:
+            //     pk.trData = new UseItemOnEntityTransactionData();
+            //     break;
+            // case ComplexInventoryTransaction.Type.ItemReleaseTransaction:
+            //     pk.trData = new ReleaseItemTransactionData();
+            //     break;
+            // default:
+            //     throw new Error(`Unknown transaction type: ${pk.transactionType}`);
+            // }
+            // pk.trData.decode(ptr);
+
+            // console.dir(pk, { depth: null });
+
+            if (pk.requestId !== 0 && pk.requestChangedSlots.length >= 3) {
+                if ((pk.requestChangedSlots[0].containerId === 28) &&
+                    (pk.requestChangedSlots[1].containerId === 159) && (pk.requestChangedSlots[1].changedSlots[0] === 9) &&
+                    (pk.requestChangedSlots[2].changedSlots.length === 0)) {
+                        this.suspect(ni, "Using Toolbox give");
+                        this.punish(ni, "Aquired items illegally.");
+                        return CANCEL;
+                }
+            }
+        });
+        this.listen(events.packetAfter(MinecraftPacketIds.InventoryTransaction), (pk, ni) => {
+            console.log("TRAN");
+            console.log(pk.transaction, { depth: null });
+        });
+    }
+    unload(): void {
+    }
+}

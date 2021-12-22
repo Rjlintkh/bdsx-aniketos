@@ -1,0 +1,62 @@
+{
+    "enabled": true,
+    "print-logo": true,
+    "crash-clients": false,
+    "command": true,
+    "modules": {
+        "Auto Clicker": {
+            "enabled": true,
+            "cps-cap": 20,
+            "cps-history-length": 10,
+            "warning": true
+        },
+        "Crasher": {
+            "enabled": true,
+            "punish": false
+        },
+        "Edition Faker": {
+            "enabled": false
+        },
+        "Flight": {
+            "enabled": true
+        },
+        "Give": {
+            "enabled": true
+        },
+        "Namespoof": {
+            "enabled": true
+        },
+        "No Swing": {
+            "enabled": true
+        },
+        "Nuker": {
+            "enabled": true,
+            "threshold": 1
+        },
+        "Reach": {
+            "enabled": true,
+            "threshold": 0.5
+        },
+        "Spammer": {
+            "enabled": true
+        },
+        "Toolbox": {
+            "enabled": true
+        },
+        "Xp Orb": {
+            "enabled": true
+        },
+        "Backward Sprinting": {
+            "enabled": true
+        },
+        "Freecam": {
+            "enabled": true
+        },
+        "InventoryMove": {
+            "enabled": true
+        }
+    },
+    "whitelist": [],
+    "whitelist-ops": true,
+    "console-log-suspect": true
+}

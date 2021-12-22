@@ -1,43 +1,35 @@
+# Aniketos Anti-cheat for BDSX
 
-# Aniketos Plugin
-A WIP anti-cheat for bdsx
+Aniketos is a hobby project by me as I got nothing to do, but I am busy these days. It aims to detect Horion and Toolbox.
 
-##### Current Features (1.17)
-- Toolbox
-- [x] Flying
-- [x] No-clip
-- [ ] Phase
-- [ ] Air Jump
-- [ ] High Jump
-- [ ] Speed
-- [ ] No Bow Slowdown
-- [ ] Slow Falling
-- [ ] Walk on Water
-- [ ] Blink
-- [x] Elytra Fly
-- [x] Give item
-- [x] Enchant
-- [x] Spawn Experience Orb
-- [x] Name Override
-- [ ] Anti-Knockback
-- [ ] Teleport to Player
-- [ ] Hitbox Expand
+## Features
 
-- Horion
-- [x] InstaBreak
-- [x] EditionFaker
-- [x] Enchant
-- [x] Give
-- [x] Dupe
+It provides an in-game command to modify config file easily. A whitelist is also included.
 
-- Zephyr
-- [ ] Instabreak
-- [x] XP
+#### Combat
+- [x] Auto Clicker
+- [x] Reach
+#### Movement
+- [x] Flight
+- [x] Freecam
+- [ ] Inventory Move
+#### World
+- [x] Give / Enchant / NBT / Rename / Repair
+- [x] Nuker
+- [x] Xp Orb
+#### Misc
 - [x] Crasher
-- [x] RapidHit
-- [x] MineplexFly
-- [x] HiveFly
-- [ ] CCFly
-- [ ] Jetpack
-- [ ] BlockFly
-- [ ] BlinkFly
+- [x] Edition Faker
+- [x] Namespoof
+- [x] No Swing
+- [x] Horion Spammer
+- [x] Toolbox
+- [ ] People who sell this on Omlet Arcade
+
+It also provides event and extension API to allow more customizations.
+
+## Installation
+1. Make sure BDSX is up to date
+2. Download the [latest release](https://github.com/Rjlintkh/bdsx-aniketos/releases/latest/download/aniketos.zip)
+3. Copy and extract it into `plugins` folder of your server
+4. Launch the server, it should be automatically installed
