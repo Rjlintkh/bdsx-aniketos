@@ -1,6 +1,3 @@
-import { Packet } from "bdsx/bds/packet";
-import { MinecraftPacketIds } from "bdsx/bds/packetids";
-import { events } from "bdsx/event";
 import { Aniketos } from "./src/loader";
 import AutoClicker from "./src/modules/combat/autoclicker";
 import Reach from "./src/modules/combat/reach";
@@ -34,35 +31,35 @@ aniketos.loadModule(new Spammer);
 aniketos.loadModule(new Toolbox);
 aniketos.loadModule(new XpOrb);
 
-for (let i = 1; i < 164; i++) {
-    switch (i) {
-        //case MinecraftPacketIds.MovePlayer:
-        case MinecraftPacketIds.PlayerAuthInput:
-        case MinecraftPacketIds.ClientCacheBlobStatus:
-        case MinecraftPacketIds.ClientCacheMissResponse:
-        case MinecraftPacketIds.LevelChunk:
-        case MinecraftPacketIds.MoveActorDelta:
+// for (let i = 1; i < 164; i++) {
+//     switch (i) {
+//         //case MinecraftPacketIds.MovePlayer:
+//         case MinecraftPacketIds.PlayerAuthInput:
+//         case MinecraftPacketIds.ClientCacheBlobStatus:
+//         case MinecraftPacketIds.ClientCacheMissResponse:
+//         case MinecraftPacketIds.LevelChunk:
+//         case MinecraftPacketIds.MoveActorDelta:
 
-        case MinecraftPacketIds.LevelSoundEvent:
-        case MinecraftPacketIds.SetActorData:
-        case MinecraftPacketIds.NetworkChunkPublisherUpdate:
-        case MinecraftPacketIds.SetTime:
-        case MinecraftPacketIds.UpdateAttributes:
-        case MinecraftPacketIds.SetActorMotion:
-            continue;
-    }
-    events.packetAfter(i).on((pk: Packet, ni) => {
-        if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
-            console.log("RECV", "Inv Tran", new Date());
-            return;
-        }
-        console.log("RECV", pk, new Date());
-    });
-    // events.packetSend(i).on((pk: Packet, ni) => {
-    //     if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
-    //         console.log("RECV", "Inv Tran", new Date());
-    //         return;
-    //     }
-    //     console.log("SEND", pk.getName(), new Date());
-    // });
-}
+//         case MinecraftPacketIds.LevelSoundEvent:
+//         case MinecraftPacketIds.SetActorData:
+//         case MinecraftPacketIds.NetworkChunkPublisherUpdate:
+//         case MinecraftPacketIds.SetTime:
+//         case MinecraftPacketIds.UpdateAttributes:
+//         case MinecraftPacketIds.SetActorMotion:
+//             continue;
+//     }
+//     events.packetAfter(i).on((pk: Packet, ni) => {
+//         if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
+//             console.log("RECV", "Inv Tran", new Date());
+//             return;
+//         }
+//         console.log("RECV", pk, new Date());
+//     });
+//     // events.packetSend(i).on((pk: Packet, ni) => {
+//     //     if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {
+//     //         console.log("RECV", "Inv Tran", new Date());
+//     //         return;
+//     //     }
+//     //     console.log("SEND", pk.getName(), new Date());
+//     // });
+// }

@@ -24,6 +24,7 @@ class Config {
     "print-logo" = true;
     "crash-clients" = false;
     "command" = true;
+    "lang" = "en_US";
     "modules": Record<string, ModuleConfig> = {};
     "whitelist" = new Array<WhitelistEntry>();
     "whitelist-ops" = true;
@@ -34,6 +35,7 @@ export class Aniketos {
     config: Config;
     private modules: ModuleBase[] = [];
     private cachedModules: ModuleBase[] = [];
+    private lang: Record<string, string> = {};
     constructor() {
         this.reloadConfig();
         if (this.config["enabled"] === false) {
@@ -152,6 +154,17 @@ export class Aniketos {
     private reloadConfig(): boolean {
         try {
             this.config = JSONC.parse(fs.readFileSync(path.join(__dirname, "../config.json"), "utf8"));
+            const configModel = new Config;
+            let modified = false;
+            for (const prop in configModel) {
+                if (!this.config.hasOwnProperty(prop)) {
+                    (this.config as any)[prop] = (configModel as any)[prop];
+                    modified = true;
+                }
+            }
+            if (modified) {
+                this.saveConfig();
+            }
             return true;
         } catch {
             if (!this.config) {
@@ -165,7 +178,7 @@ export class Aniketos {
 
     private saveConfig() {
         try {
-            fs.writeFileSync(path.join(__dirname, "../config.json"), JSONC.stringify(this.config, null, 4));
+            fs.writeFileSync(path.join(__dirname, "../config.json"), JSONC.stringify(this.config, null, "\t"));
             return true;
         } catch {}
         return false;
@@ -248,8 +261,25 @@ export class Aniketos {
                 event.on(listener);
                 (module as any).listeners.push([event, listener]);
             };
+            (module as any).repairConfig = () => {
+                const configModel = new module.configModel;
+                let modified = false
+                for (const prop in configModel) {
+                    if (!this.config.modules[name].hasOwnProperty(prop)) {
+                        (this.config.modules[name] as any)[prop] = (configModel as any)[prop];
+                        modified = true;
+                    }
+                }
+                if (modified) {
+                    this.saveConfig();
+                }
+            }
+            (module as any).repairConfig();
             module.getCore = () => this;
-            module.getConfig = () => this.config["modules"][name];
+            module.getConfig = () => {
+                this.config["modules"][name];
+                (module as any).repairConfig();
+            }
             module.setConfig = config => {
                 this.config["modules"][name] = config
                 return this.saveConfig();
