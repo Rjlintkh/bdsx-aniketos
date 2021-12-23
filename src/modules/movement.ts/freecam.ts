@@ -6,29 +6,28 @@ import { DB, Utils } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class Freecam extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Freecam
-         * @version: 1.0.0
-         * @description: Detects if players stop sending packets.
-         */
-    }
-
     configModel = ModuleConfig;
+    langModel = () => {
+    /*
+        name=Freecam
+        description=Detects if players stop sending packets.
+
+        suspect.generic=Client stopped sending movement packets for [%s ms].
+    */};
     
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAuthInput), (pk, ni) => {
-            const last = DB.getPlayerData(ni, "freecam.last") ?? 0;
+            const last = DB.getPlayerData(ni, "Freecam.last") ?? 0;
             const laternacy = Date.now() - last - Utils.getPing(ni);
             if (last !== 0 && (laternacy > 1000)) {
-                this.suspect(ni, `Client stopped sending movement packets for [${laternacy} ms].`);
+                this.suspect(ni, this.translate("suspect.generic", [laternacy.toString()]));
                 serverInstance.disconnectClient(ni, "disconnectionScreen.timeout");
             }
-            DB.setPlayerData(ni, Date.now(), "freecam.last");
+            DB.setPlayerData(ni, Date.now(), "Freecam.last");
         });
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
             if (pk.action === PlayerActionPacket.Actions.Respawn || pk.action === PlayerActionPacket.Actions.DimensionChangeAck) {
-                DB.setPlayerData(ni, 0, "freecam.last");
+                DB.setPlayerData(ni, 0, "Freecam.last");
             }
         });
     }

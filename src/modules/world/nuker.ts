@@ -8,22 +8,24 @@ import { DB, Utils } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class Nuker extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Nuker
-         * @version: 1.0.0
-         * @description: Checks if players destroy blocks faster than expected time.
-         */
-    }
-    
     configModel = class Config extends ModuleConfig {
         "threshold" = 1;
     };
+    langModel = () => {
+    /*
+        name=Nuker
+        description=Checks if players destroy blocks faster than expected time.
+
+        suspect.instabreak=Invoked creative block destruction in survival mode.
+        suspect.tooFast=Desktroyed block [%1] in [%2 ticks] but expected to be [%3 ticks].
+        suspect.didNotStart=Desktroyed block [%1] before starting.
+    */};
+    
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
             if (pk.action === PlayerActionPacket.Actions.CreativePlayerDestroyBlock) {
                 if (!Utils.isCreativeLikeModes(ni.getActor()!)) {
-                    this.suspect(ni, "Invoked creative block destruction in survival mode.");
+                    this.suspect(ni, this.translate("suspect.instabreak"));
                     return CANCEL;
                 }
             }
@@ -31,28 +33,28 @@ export default class Nuker extends ModuleBase {
         this.listen(events.blockDestructionStart, event => {
             if (!Utils.isCreativeLikeModes(event.player)) {
                 const ni = event.player.getNetworkIdentifier();
-                DB.setPlayerData(ni, Utils.getCurrentTick(), "nuker.cracking");
+                DB.setPlayerData(ni, Utils.getCurrentTick(), "Nuker.cracking");
             }
         });
         this.listen(events.blockDestroy, event => {
             const ni = event.player.getNetworkIdentifier();
-            const tick = DB.getPlayerData(ni, "nuker.cracking");
+            const tick = DB.getPlayerData(ni, "Nuker.cracking");
             const block = event.blockSource.getBlock(event.blockPos);
             if (tick) {
                 const ticksNeeded = (this.getDestroyTime(event.player, block)) * 20;
                 const ticksUsed = Utils.getCurrentTick() - tick + 1;
                 
                 if (ticksUsed + (this.getConfig().threshold ?? 0) < ticksNeeded) {
-                    this.suspect(ni, `Desktroyed block [${block.getName()}] in [${ticksUsed} ticks] but expected to be [${ticksNeeded} ticks].`);
+                    this.suspect(ni, this.translate("suspect.tooFast", [block.getName(), ticksUsed.toString(), ticksNeeded.toString()]));
                     return CANCEL;
                 }
             } else {
                 if (block.blockLegacy.getDestroyTime() !== 0) {
-                    this.suspect(ni, `Desktroyed block [${block.getName()}] before starting.`);
+                    this.suspect(ni, this.translate("suspect.didNotStart", [block.getName()]));
                 }
                 return CANCEL;
             }
-            DB.setPlayerData(ni, 0, "nuker.cracking");
+            DB.setPlayerData(ni, 0, "Nuker.cracking");
         });
     }
     unload(): void {

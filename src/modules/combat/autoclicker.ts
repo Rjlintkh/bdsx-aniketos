@@ -14,19 +14,22 @@ interface CPSHistory {
 }
 
 export default class AutoClicker extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Auto Clicker
-         * @version: 1.0.0
-         * @description: Checks if players are clicking too fast or consistently.
-         */
-    }
-    
     configModel = class Config extends ModuleConfig {
         "cps-cap" = 20;
         "cps-history-length" = 10;
         "warning" = true;
     };
+    langModel = () => {
+    /*
+        name=Auto Clicker
+        description=Checks if players are clicking too fast or consistently.
+        
+        suspect.tooFast=Clicking too fast at [%s CPS].
+        suspect.tooConsistently=Clicking too consistently at [%s CPS].
+        
+        warning.tooFast=Please slow down, you are clicking too fast.
+    */};
+    
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.LevelSoundEvent), (pk, ni) => {
             if (pk.sound === 42 && !pk.disableRelativeVolume) {
@@ -45,15 +48,15 @@ export default class AutoClicker extends ModuleBase {
     click(ni: NetworkIdentifier): boolean {
         const now = Date.now();
 
-        let clicks = DB.getPlayerData(ni, "autoclicker.clicks") as number[] ?? [];
+        let clicks = DB.getPlayerData(ni, "AutoClicker.clicks") as number[] ?? [];
 
         clicks = clicks.filter(t => now - t < 1000);
         clicks.push(now);
-        DB.setPlayerData(ni, clicks, "autoclicker.clicks");
+        DB.setPlayerData(ni, clicks, "AutoClicker.clicks");
 
         const cps = clicks.length;
         
-        const history = DB.getPlayerData(ni, "autoclicker.history") as CPSHistory ?? {
+        const history = DB.getPlayerData(ni, "AutoClicker.history") as CPSHistory ?? {
             last: now,
             history: [{time: now, cps}]
         };
@@ -63,17 +66,17 @@ export default class AutoClicker extends ModuleBase {
             history.last = now;
             history.history.push({time: now, cps});
         }
-        DB.setPlayerData(ni, history, "autoclicker.history");
+        DB.setPlayerData(ni, history, "AutoClicker.history");
 
         if (cps > 10 && history.history.length >= (this.getConfig()["cps-history-length"] ?? 10) && history.history.every(c => c.cps === history.history[0].cps || c.cps === history.history[0].cps + 1 || c.cps === history.history[0].cps - 1)) {
-            this.suspect(ni, `Player is clicking too consistently at [${cps} CPS].`);
+            this.suspect(ni, this.translate("suspect.tooConsistently", [cps.toString()]));
             return true;
         }
 
         if (cps > (this.getConfig()["cps-cap"] ?? 15)) {
-            this.suspect(ni, `Player is clicking too fast at [${cps} CPS].`);
+            this.suspect(ni, this.translate("suspect.tooFast", [cps.toString()]));
             if (this.getConfig()["warning"]) {
-                this.warn(ni, "Please slow down, you are clicking too fast.");
+                this.warn(ni, this.translate("warning.tooFast"));
             }
             return true;
         }

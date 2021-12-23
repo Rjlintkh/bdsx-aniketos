@@ -15,15 +15,16 @@ enum Flag1 {
 }
 
 export default class Flight extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Flight
-         * @version: 1.0.0
-         * @description: Detects illegal flying.
-         */
-    }
-
     configModel = ModuleConfig;
+    langModel = () => {
+    /*
+        name=Flight
+        description=Detects illegal flying.
+
+        suspect.mismatchedAbilities=Setting self abilities to allow flight illegally.
+        suspect.clientGlide=Invoked gliding action from client, possibly Toolbox Elytra Fly.
+        suspect.invalidPositionMode=Invalid player position mode [144], possibly Zephyr HiveFly.
+    */};
     
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.AdventureSettings), (pk, ni) => {
@@ -32,20 +33,20 @@ export default class Flight extends ModuleBase {
                 const abilities = player.abilities;
                 if (!abilities.getAbility(AbilitiesIndex.MayFly).value.boolVal) {
                     player.syncAbilties();
-                    this.suspect(ni, "Setting self abilities to allow flight illegally.");
+                    this.suspect(ni, this.translate("suspect.mismatchedAbilities"));
                     return CANCEL;
                 }
             }
         });
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
             if (pk.action  === PlayerActionPacket.Actions.StartGlide) {
-                this.suspect(ni, "Invoked gliding action from client, possibly Toolbox Elytra Fly.");
+                this.suspect(ni, this.translate("suspect.clientGlide"));
                 return CANCEL;
             }
         });
         this.listen(events.packetBefore(MinecraftPacketIds.MovePlayer), (pk, ni) => {
             if (pk.mode === 144) {
-                this.suspect(ni, "Invalid player position mode [144], possibly Zephyr HiveFly.");
+                this.suspect(ni, this.translate("suspect.invalidPositionMode"));
                 return CANCEL;
             }
         });

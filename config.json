@@ -5,8 +5,9 @@
 	"lang": "en_US",
 	"command": true,
 	"modules": {
+        // Please reset config for this update
 	},
 	"whitelist": [],
 	"whitelist-ops": true,
-	"console-log-suspect": true,
+	"console-log-suspect": true
 }

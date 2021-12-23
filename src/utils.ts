@@ -35,6 +35,34 @@ export namespace Utils {
         }
         return serverInstance.networkHandler.instance.peer.GetLastPing(ni.address);
     }
+    export function formatString(str: string,  params:string[] = []) {
+        if (params.length === 0) {
+            return str;
+        }
+        const escaped = str.split("%%");
+        const ret: string[] = [];
+        for (let s of escaped) {
+            // Matches %s
+            s = s.replace(/%s/g, m => {
+                const param = params.shift();
+                if (param === undefined) {
+                    return "%s";
+                }
+                return param;
+            });
+            // Matches %1 and %1$s
+            s = s.replace(/%\d+(\$s)?/g, m => {
+                const index = parseInt(m.match(/\d+/)![0]) - 1;
+                const p = params[index];
+                if (p === undefined) {
+                    return "";
+                }
+                return p;
+            });
+            ret.push(s);
+        }
+        return ret.join("%");
+    }
     export const getAuthInputData = LL.js("?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z", bool_t, null, PlayerAuthInputPacket, uint8_t);
     export class PlayerDB {
         private db = new Map<NetworkIdentifier, Record<string, any>>();

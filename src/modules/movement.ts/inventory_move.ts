@@ -6,25 +6,26 @@ import { DB, Utils } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class InventoryMove extends ModuleBase {
-    info(): void {
-        /**
-         * @name: InventoryMove
-         * @version: 1.0.0
-         * @description: Detects if players still move when opening inventory screens. (Does not work for Horion)
-         */
-    }
-
     configModel = ModuleConfig;
+    langModel = () => {
+    /*
+        name=Inventory Move
+        description=Detects if players still move when opening inventory screens. (Does not work for Horion)
+
+        suspect.generic=Player still moving when opening inventory screen.
+
+        punish.generic=Do not move when opening inventory screen.
+    */};
     
     load(): void {
         this.listen(events.packetSend(MinecraftPacketIds.ContainerOpen), (pk, ni) => {
-            DB.setPlayerData(ni, true, "inventorymove.open");
+            DB.setPlayerData(ni, true, "InventoryMove.open");
             const player = ni.getActor()!;
             player.abilities.setAbility(AbilitiesIndex.WalkSpeed, 0);
             player.syncAbilties();
         });
         this.listen(events.packetBefore(MinecraftPacketIds.ContainerClose), (pk, ni) => {
-            DB.setPlayerData(ni, false, "inventorymove.open");
+            DB.setPlayerData(ni, false, "InventoryMove.open");
             const player = ni.getActor()!;
             player.abilities.setAbility(AbilitiesIndex.WalkSpeed, 0.1);
             player.syncAbilties();
@@ -34,10 +35,9 @@ export default class InventoryMove extends ModuleBase {
                 Utils.getAuthInputData(pk, PlayerAuthInputPacket.InputData.Down) ||
                 Utils.getAuthInputData(pk, PlayerAuthInputPacket.InputData.Left) ||
                 Utils.getAuthInputData(pk, PlayerAuthInputPacket.InputData.Right)) {
-                    console.log("move")
-                if (DB.getPlayerData(ni, "inventorymove.open")) {
-                    this.suspect(ni, "Player still moving when opening inventory screen.");
-                    this.punish(ni, "Stop moving in inventory screens.");
+                if (DB.getPlayerData(ni, "InventoryMove.open")) {
+                    this.suspect(ni, this.translate("suspect.generic"));
+                    this.punish(ni, this.translate("punish.generic"));
                 }
             }
         });

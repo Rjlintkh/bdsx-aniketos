@@ -7,17 +7,17 @@ import { ModuleBase, ModuleConfig } from "../base";
 
 
 export default class Reach extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Reach
-         * @version: 1.0.0
-         * @description: Checks if players aim entities further than expected distance.
-         */
-    }
-
     configModel = class Config extends ModuleConfig {
         "threshold" = 0.5;
     };
+    langModel = () => {
+    /*
+        name=Reach
+        description=Checks if players aim entities further than expected distance.
+
+        suspect.tooFarAway=Aiming too far away from [%s Blocks].
+    */};
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.Interact), (pk, ni) => {
             if (pk.action === InteractPacket.Actions.Mouseover) {
@@ -30,7 +30,7 @@ export default class Reach extends ModuleBase {
                         let dz = currentPos.z - pk.pos.z;
                         let dl = Math.sqrt(dx * dx + dy * dy + dz * dz);
                         if (dl > 3 + (this.getConfig().threshold ?? 0)) {
-                            this.suspect(ni, `Aiming distance exceeded, aiming from [${dl} Blocks].`);
+                            this.suspect(ni, this.translate("suspect.tooFarAway", [dl.toString()]));
                             return CANCEL;
                         }
                     }

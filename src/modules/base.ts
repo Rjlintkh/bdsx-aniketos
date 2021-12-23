@@ -8,14 +8,27 @@ export class ModuleConfig {
     "enabled" = true;
 }
 
+interface ModuleInfo {
+    name: string;
+    description: string;
+}
+
 export abstract class ModuleBase {
-    abstract info(): any;
+    configModel =  ModuleConfig;
+    langModel = () => {};
 
     abstract load(): void;
     abstract unload(): void;
 
-    configModel =  ModuleConfig;
-
+    info(): ModuleInfo {
+        return {
+            name: this.translate("name"),
+            description: this.translate("description")
+        }
+    }
+    translate(str: string, params: string[] = []): string {
+        return this.getCore().translate(`modules.${this.constructor.name}.${str}`, params);
+    }
     log(message: string): void {
         this.log(message);
     }
@@ -35,26 +48,26 @@ export abstract class ModuleBase {
     broadcast(message: string): void {
         const ops = Utils.getOnlineOperators();
         for (const op of ops) {
-            op.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r Broadcast: ${message}`);
+            op.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r ${this.getCore().translate("base.message.broadcast")} ${message}`);
         }
-        this.log(`Broadcast: ${message}`);
+        this.log(`${this.getCore().translate("base.message.broadcast")} ${message}`);
     }
     suspect(player: NetworkIdentifier, message: string): void {
         const cancelled = this.getCore().events.suspect.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
             const ops = Utils.getOnlineOperators();
             for (const op of ops) {
-                op.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r §8${DB.gamertag(player)}§r suspected: ${message}`);
+                op.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r ${this.getCore().translate("base.message.suspect", [`§8${DB.gamertag(player)}§r`])} ${message}`);
             }
             if (this.getCore().config["console-log-suspect"]) {
-                this.log(`${DB.gamertag(player).gray} suspected: ${message}`);
+                this.log(`${this.getCore().translate("base.message.suspect", [`${DB.gamertag(player).gray}`])} ${message}`);
             }
         }
     }
     warn(player: NetworkIdentifier, message: string): void {
         const cancelled = this.getCore().events.warn.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
-            player.getActor()!.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r You are warned: ${message}`);
+            player.getActor()!.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r ${this.getCore().translate("base.message.warning")} ${message}`);
         }
     }
     punish(player: NetworkIdentifier, message: string): void {

@@ -3,15 +3,16 @@ import { events } from "bdsx/event";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class Toolbox extends ModuleBase {
-    info(): void {
-        /**
-         * @name: Toolbox
-         * @version: 1.0.0
-         * @description: Fucks Toolbox players.
-         */
-    }
-
     configModel = ModuleConfig;
+    langModel = () => {
+    /*
+        name=Toolbox
+        description=Fucks Toolbox players.
+
+        suspect.generic=Toolbox detected.
+
+        punish.generic=Do not use Toolbox.
+    */};
     
     load(): void {
         this.listen(events.packetAfter(MinecraftPacketIds.Login), (pk, ni) => {
@@ -20,8 +21,8 @@ export default class Toolbox extends ModuleBase {
                 const model = connreq.getJsonValue()!["DeviceModel"];
                 const brand = model.split(" ")[0];
                 if (brand.toUpperCase() !== brand) {
-                    this.suspect(ni, "Toolbox is detected.");
-                    this.punish(ni, "Use an unmodified client.");
+                    this.suspect(ni, this.translate("suspect.generic"));
+                    this.punish(ni, this.translate("punish.generic"));
                 }
             }
         });
