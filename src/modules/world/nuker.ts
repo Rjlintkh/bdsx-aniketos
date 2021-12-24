@@ -17,7 +17,7 @@ export default class Nuker extends ModuleBase {
         description=Checks if players destroy blocks faster than expected time.
 
         suspect.instabreak=Invoked creative block destruction in survival mode.
-        suspect.tooFast=Desktroyed block [%1] in [%2 ticks] but expected to be [%3 ticks].
+        suspect.tooFast=Destroyed block [%1] in [%2 ticks] but expected to be [%3 ticks].
         suspect.didNotStart=Desktroyed block [%1] before starting.
     */};
     

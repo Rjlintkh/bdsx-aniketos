@@ -8,11 +8,6 @@ export class ModuleConfig {
     "enabled" = true;
 }
 
-interface ModuleInfo {
-    name: string;
-    description: string;
-}
-
 export abstract class ModuleBase {
     configModel =  ModuleConfig;
     langModel = () => {};
@@ -20,14 +15,15 @@ export abstract class ModuleBase {
     abstract load(): void;
     abstract unload(): void;
 
-    info(): ModuleInfo {
+    info() {
         return {
             name: this.translate("name"),
             description: this.translate("description")
         }
     }
+    
     translate(str: string, params: string[] = []): string {
-        return this.getCore().translate(`modules.${this.constructor.name}.${str}`, params);
+        return this.translate(str, params);
     }
     log(message: string): void {
         this.log(message);

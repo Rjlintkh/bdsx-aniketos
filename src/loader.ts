@@ -341,6 +341,7 @@ export class Aniketos {
                 } catch { }
             // }
             (module as any).listeners = [];
+            module.translate = (str, params) => this.translate(`modules.${this.constructor.name}.${str}`, params);
             module.log = message => this.log(module.info().name.magenta + " " + message);
             module.listen = <T extends (...args: any[]) => any>(event: Event<T>, listener: T): void => {
                 event.on(listener);
