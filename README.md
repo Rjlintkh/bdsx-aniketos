@@ -35,5 +35,5 @@ It also provides event and extension API to allow more customizations.
 4. Launch the server, it should be automatically installed
 
 ## Credits
-- [`@ambient#2309`](https://github.com/ambiennt) - Nothing
-- `@Ixtinction Ray#3101` - Japanese Translation
+- [`ambient#2309`](https://github.com/ambiennt) - Nothing
+- `Ixtinction Ray#3101` - Japanese Translation
