@@ -33,3 +33,7 @@ It also provides event and extension API to allow more customizations.
 2. Download the [latest release](https://github.com/Rjlintkh/bdsx-aniketos/releases/latest/download/aniketos.zip)
 3. Copy and extract it into `plugins` folder of your server
 4. Launch the server, it should be automatically installed
+
+## Credits
+- [`@ambient#2309`](https://github.com/ambiennt) - Nothing
+- `@Ixtinction Ray#3101` - Japanese Translation
