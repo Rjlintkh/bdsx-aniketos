@@ -1,8 +1,10 @@
 import { AbilitiesIndex } from "bdsx/bds/abilities";
+import { ArmorSlot } from "bdsx/bds/inventory";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { PlayerActionPacket } from "bdsx/bds/packets";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
+import { serverProperties } from "bdsx/serverproperties";
 import { ModuleBase, ModuleConfig } from "../base";
 
 enum Flag1 {
@@ -40,6 +42,13 @@ export default class Flight extends ModuleBase {
         });
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
             if (pk.action  === PlayerActionPacket.Actions.StartGlide) {
+                if (serverProperties["server-authoritative-movement"] === "client-auth") {
+                    const player = ni.getActor()!;
+                    const torso = player.getArmor(ArmorSlot.Torso);
+                    if (torso.getRawNameId() === "elytra") {
+                        return;
+                    }
+                }
                 this.suspect(ni, this.translate("suspect.clientGlide"));
                 return CANCEL;
             }
