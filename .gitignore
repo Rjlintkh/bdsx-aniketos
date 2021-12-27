@@ -1,4 +1,6 @@
 
 /node_modules
 *.js
-/release
+/releases
+make_release.bat
+config.json

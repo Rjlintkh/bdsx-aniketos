@@ -11,6 +11,7 @@ import { ProcHacker } from "bdsx/prochacker";
 export const LL = ProcHacker.load("pdb.ini", [
     "?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z",
     "?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z",
+    "?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z",
 ]);
 
 export namespace Utils {
