@@ -49,10 +49,12 @@ export default class Nuker extends ModuleBase {
                     return CANCEL;
                 }
             } else {
-                if (block.blockLegacy.getDestroyTime() !== 0) {
-                    this.suspect(ni, this.translate("suspect.didNotStart", [block.getName()]));
+                if (!Utils.isCreativeLikeModes(event.player)) {
+                    if (block.blockLegacy.getDestroyTime() !== 0) {
+                        this.suspect(ni, this.translate("suspect.didNotStart", [block.getName()]));
+                    }
+                    return CANCEL;
                 }
-                return CANCEL;
             }
             DB.setPlayerData(ni, 0, "Nuker.cracking");
         });
