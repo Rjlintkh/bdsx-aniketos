@@ -25,7 +25,7 @@ export default class InventoryMove extends ModuleBase {
             player.syncAbilties();
         });
         this.listen(events.packetBefore(MinecraftPacketIds.ContainerClose), (pk, ni) => {
-            DB.setPlayerData(ni, false, "InventoryMove.open");
+            DB.setPlayerData(ni, false, "InventoryMove.close");
             const player = ni.getActor()!;
             player.abilities.setAbility(AbilitiesIndex.WalkSpeed, 0.1);
             player.syncAbilties();
