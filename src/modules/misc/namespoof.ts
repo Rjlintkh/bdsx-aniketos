@@ -1,8 +1,8 @@
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
-import { DeviceOS } from "bdsx/common";
 import { events } from "bdsx/event";
 import { DB } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
+import { TitleId } from "./edition_faker";
 
 export default class Namespoof extends ModuleBase {
     configModel = class Config extends ModuleConfig {
@@ -17,10 +17,10 @@ export default class Namespoof extends ModuleBase {
 
         punish.generic=Use your real gamertag.
     */};
-    
+
     load(): void {
         this.listen(events.packetSend(MinecraftPacketIds.PlayStatus), (pk, ni) => {
-            if (pk.status === 3 && DB.getPlayerData(ni, "DeviceOS") !== DeviceOS.PLAYSTATION) {
+            if (pk.status === 3 && DB.titleId(ni) !== TitleId.NINTENDO && DB.titleId(ni) !== TitleId.PLAYSTATION) {
                 const gamertag = DB.gamertag(ni);
                 const player = ni.getActor()!;
                 const name = player.getName();

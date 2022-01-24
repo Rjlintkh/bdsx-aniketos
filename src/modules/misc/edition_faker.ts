@@ -3,7 +3,7 @@ import { DeviceOS } from "bdsx/common";
 import { events } from "bdsx/event";
 import { ModuleBase, ModuleConfig } from "../base";
 
-enum TitleId {
+export enum TitleId {
 	ANDROID = 1739947436,
 	IOS = 1810924247,
 	WINDOWS_10 = 896928775,
@@ -23,7 +23,7 @@ export default class EditionFaker extends ModuleBase {
 
         punish.generic=Disable edition faker.
     */};
-    
+
     load(): void {
         this.listen(events.packetAfter(MinecraftPacketIds.Login), (pk, ni) => {
             const connreq = pk.connreq;
