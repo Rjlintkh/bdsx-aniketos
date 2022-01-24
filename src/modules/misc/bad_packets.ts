@@ -19,7 +19,7 @@ export default class BadPackets extends ModuleBase {
         suspect.chat.invalidType=Chat message is not of type chat.
         suspect.chat.mismatchedNames=Chat author and player name do not match.
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.Text), (pk, ni) => {
             if (pk.message.length > 512) {
@@ -34,35 +34,29 @@ export default class BadPackets extends ModuleBase {
             }
             const name = ni.getActor()!.getName();
             if (pk.name !== name) {
-                this.suspect(ni, this.translate("suspect.chat.invalidType"));
+                this.suspect(ni, this.translate("suspect.chat.mismatchedNames"));
                 pk.name = name;
                 return;
             }
         });
         {
-            // @ts-expect-error
-            if (ServerPlayer.prototype.isRiding !== undefined) {
-                this.listen(events.packetBefore(MinecraftPacketIds.MoveActorAbsolute), (pk, ni) => {
-                    const player = ni.getActor()!;
-                    // @ts-ignore
-                    if (player.isRiding()) {
-                        return CANCEL;
-                    }
-                });
-            }
+            this.listen(events.packetBefore(MinecraftPacketIds.MoveActorAbsolute), (pk, ni) => {
+                const player = ni.getActor()!;
+                if (player.isRiding()) {
+                    return CANCEL;
+                }
+            });
         }
         {
-            // @ts-expect-error
-            if (ServerPlayer.prototype.stopSleepInBed !== undefined) {
-                const original = LL.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z", void_t, null, ServerPlayer, int32_t, bool_t)
-                ((player, dimensionId: DimensionId, useNetherPortal) => {
-                    if (useNetherPortal && (player.getSleepTimer() > 0)) {
-                        // @ts-ignore
-                        player.stopSleepInBed(true, true);
-                    }
-                    return original(player, dimensionId, useNetherPortal);
-                });
-            }
+            const original = LL.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z", void_t, null, ServerPlayer, int32_t, bool_t)
+            ((player, dimensionId: DimensionId, useNetherPortal) => {
+                // if (useNetherPortal && (player.getSleepTimer() > 0)) {
+                if (useNetherPortal && player.isSleeping()) {
+                    // player.stopSleepInBed(true, true);
+                    player.setSleeping(false);
+                }
+                return original(player, dimensionId, useNetherPortal);
+            });
         }
     }
     unload(): void {
