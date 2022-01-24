@@ -3,6 +3,7 @@ import vm = require("vm");
 import path = require("path");
 import { CommandPermissionLevel } from "bdsx/bds/command";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { serverInstance } from "bdsx/bds/server";
 import { command } from "bdsx/command";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
@@ -21,7 +22,8 @@ interface WhitelistEntry {
 class Config {
     "enabled" = true;
     "print-logo" = true;
-    "crash-clients" = false;
+    "crash-clients" = true;
+	"no-console-spam" = true;
     "command" = true;
     "lang" = "en_US";
     "modules": Record<string, ModuleConfig> = {};
@@ -101,6 +103,8 @@ export class Aniketos {
         command.output.moduleDisable=Module %s has been disabled.
         command.output.moduleReload=Reloaded all modules.
         command.output.configChange=%s has been changed.
+        
+        module.command.desc.generic=Configures module %s of Aniketos.
     */};
 
     constructor() {
@@ -127,40 +131,43 @@ export class Aniketos {
                 this.unloadModule(module);
             }
         });
+        {
+            // Evil stuff
+            let lastLog = "";
+            let spamCount = 1;
+            
+            const original = process.stdout.write.bind(process.stdout);
+            process.stdout.write = (buffer: string, db: any) => {
+                if (typeof buffer === "string" && lastLog === buffer && buffer.startsWith("Aniketos".red)) {
+                    spamCount++;
+                    if (this.config["no-console-spam"]) {
+                        original("\x1b[A");
+                        original("\x1b[K");
+                        return original("[".gray + spamCount.toString().yellow + "]".gray + " " + buffer, db);
+                    }
+                } else {
+                    spamCount = 1;
+                }
+                lastLog = buffer;
+                return original(buffer, db);
+            };
+        }
         bedrockServer.afterOpen().then(() => {
             if (this.config["command"]) {
-                const factory = command.register("aniketos", this.translate("command.desc"), CommandPermissionLevel.Operator);
+                const factory = command.register("aniketos", this.translate("base.command.desc"), CommandPermissionLevel.Operator);
 
                 factory.overload((params, origin, output) => {
-                    let message = this.translate("command.output.activeModules", [this.modules.length.toString()]);
-                    for (const module of this.modules) {
-                        const info = module.info();
-                        message += `\n - §5${info.name}§r: §7${info.description}§r`;
-                    }
-                    message += "\n" + this.translate("command.output.inactiveModules", [this.cachedModules.length.toString()]);
-                    for (const module of this.cachedModules) {
-                        const info = module.info();
-                        message += `\n - §5${info.name}§r: §7${info.description}§r`;
-                    }
-                    output.success(message);
-                }, { action: command.enum("aniketos.list", { "list": 0 }) });
-
-                factory.overload((params, origin, output) => {
-                    const config = this.config.modules[params.module];
-                    const module = this.cachedModules.find(m => m.constructor.name === params.module);
-                    if (config && module) {
-                        config.enabled = true;
-                        this.saveConfig();
-                        this.loadModule(module);
-                        output.success(this.translate("command.output.moduleEnable", [params.module]));
+                    (this.config as any)[params.key] = params.value;
+                    if (this.saveConfig()) {
+                        output.success(this.translate("base.command.output.configChange", [params.key]));
                     } else {
-                        if (this.modules.find(m => m.constructor.name === params.module)) {
-                            output.error(this.translate("command.error.moduleAlreadyLoaded", [params.module]));
-                        } else {
-                            output.error(this.translate("command.error.moduleNotFound", [params.module]));
-                        }
+                        output.error(this.translate("base.command.error.configSave"));
                     }
-                }, { action: command.enum("aniketos.enable", { "enable": 0 }), module: CxxString });
+                }, { action: command.enum("aniketos.config", { "config": 0 }), key: command.enum("Key", 
+                    {
+                        "whitelist-ops": "whitelist-ops",
+                        "console-log-suspect": "console-log-suspect",
+                    }), value: bool_t});
 
                 factory.overload((params, origin, output) => {
                     const config = this.config.modules[params.module];
@@ -169,15 +176,46 @@ export class Aniketos {
                         config.enabled = false;
                         this.saveConfig();
                         this.unloadModule(module);
-                        output.success(this.translate("command.output.moduleDisable", [params.module]));
+                        output.success(this.translate("base.command.output.moduleDisable", [params.module]));
                     } else {
                         if (this.cachedModules.find(m => m.constructor.name === params.module)) {
-                            output.error(this.translate("command.error.moduleNotLoaded", [params.module]));
+                            output.error(this.translate("base.command.error.moduleNotLoaded", [params.module]));
                         } else {
-                            output.error(this.translate("command.error.moduleNotFound", [params.module]));
+                            output.error(this.translate("base.command.error.moduleNotFound", [params.module]));
                         }
                     }
                 }, { action: command.enum("aniketos.disable", { "disable": 0 }), module: CxxString });
+
+                factory.overload((params, origin, output) => {
+                    const config = this.config.modules[params.module];
+                    const module = this.cachedModules.find(m => m.constructor.name === params.module);
+                    if (config && module) {
+                        config.enabled = true;
+                        this.saveConfig();
+                        this.loadModule(module);
+                        output.success(this.translate("base.command.output.moduleEnable", [params.module]));
+                    } else {
+                        if (this.modules.find(m => m.constructor.name === params.module)) {
+                            output.error(this.translate("base.command.error.moduleAlreadyLoaded", [params.module]));
+                        } else {
+                            output.error(this.translate("base.command.error.moduleNotFound", [params.module]));
+                        }
+                    }
+                }, { action: command.enum("aniketos.enable", { "enable": 0 }), module: CxxString });
+
+                factory.overload((params, origin, output) => {
+                    let message = this.translate("base.command.output.activeModules", [this.modules.length.toString()]);
+                    for (const module of this.modules) {
+                        const info = module.info();
+                        message += `\n - §5${info.name}§r: §7${info.description}§r`;
+                    }
+                    message += "\n" + this.translate("base.command.output.inactiveModules", [this.cachedModules.length.toString()]);
+                    for (const module of this.cachedModules) {
+                        const info = module.info();
+                        message += `\n - §5${info.name}§r: §7${info.description}§r`;
+                    }
+                    output.success(message);
+                }, { action: command.enum("aniketos.list", { "list": 0 }) });
 
                 factory.overload((params, origin, output) => {
                     this.reloadConfig();
@@ -188,22 +226,8 @@ export class Aniketos {
                     for (const module of _cachedModules) {
                         this.loadModule(module);
                     }
-                    output.success(this.translate("command.output.moduleReload"));
+                    output.success(this.translate("base.command.output.moduleReload"));
                 }, { action: command.enum("aniketos.reload", { "reload": 0 })});
-
-                factory.overload((params, origin, output) => {
-                    (this.config as any)[params.key] = params.value;
-                    if (this.saveConfig()) {
-                        output.success(this.translate("command.output.configChange", [params.key]));
-                    } else {
-                        output.error(this.translate("command.error.configSave"));
-                    }
-                }, { action: command.enum("aniketos.config", { "config": 0 }), key: command.enum("Key", 
-                    {
-                        "whitelist-ops": "whitelist-ops",
-                        "console-log-suspect": "console-log-suspect",
-                    }), value: bool_t});
-                    
             }
         });
     }
@@ -328,6 +352,7 @@ export class Aniketos {
 
     loadModule(module: ModuleBase | null): void {
         if (module) {
+            let _module = module as any;
             const name = module.constructor.name;
             const config = this.config["modules"][name];
             if (!config) {
@@ -340,14 +365,28 @@ export class Aniketos {
                     fs.writeFileSync(path.join(__dirname, `./texts/${this.lang.locale}.lang`), Language.stringify(this.lang));
                 } catch { }
             // }
-            (module as any).listeners = [];
+            _module.listeners = [];
             module.translate = (str, params) => this.translate(`modules.${name}.${str}`, params);
             module.log = message => this.log(module.info().name.magenta + " " + message);
             module.listen = <T extends (...args: any[]) => any>(event: Event<T>, listener: T): void => {
                 event.on(listener);
-                (module as any).listeners.push([event, listener]);
+                _module.listeners.push([event, listener]);
             };
-            (module as any).repairConfig = () => {
+            module.registerCommand = (callback, parameters) => {
+                const cmdName = name.toLowerCase();
+                bedrockServer.afterOpen().then(() => {
+                    const signature = serverInstance.minecraft.getCommands().getRegistry().findCommand(cmdName);
+                    if (signature) {
+                        signature.permissionLevel = CommandPermissionLevel.Operator;
+                    }
+                    if (!_module.command) {
+                        _module.command = command.register(cmdName, this.translate("base.module.command.desc.generic", [module.info().name]), CommandPermissionLevel.Operator);
+                    }
+                    _module.command.overload(callback, parameters ?? {});
+                    serverInstance.updateCommandList();
+                });
+            }
+            _module.repairConfig = () => {
                 const configModel = new module.configModel;
                 let modified = false
                 for (const prop in configModel) {
@@ -360,11 +399,11 @@ export class Aniketos {
                     this.saveConfig();
                 }
             }
-            (module as any).repairConfig();
+            _module.repairConfig();
             module.getCore = () => this;
             module.getConfig = () => {
                 this.config["modules"][name];
-                (module as any).repairConfig();
+                _module.repairConfig();
                 return this.config["modules"][name];
             }
             module.setConfig = config => {
@@ -388,8 +427,19 @@ export class Aniketos {
     }
     unloadModule(module: ModuleBase | null): void {
         if (module) {
-            for (const [event, listener] of (module as any).listeners as any[]) {
+            let _module = module as any;
+            for (const [event, listener] of _module.listeners as any[]) {
                 event.remove(listener);
+            }
+            if (_module.command) {
+                bedrockServer.afterOpen().then(() => {
+                    const signature = serverInstance.minecraft.getCommands().getRegistry().findCommand(module.constructor.name.toLowerCase());
+                    if (signature) {
+                        signature.overloads.splice(0, signature.overloads.size());
+                        signature.permissionLevel = CommandPermissionLevel.Internal;
+                        serverInstance.updateCommandList();
+                    }
+                });
             }
             module.unload();
             module.log(this.translate("base.moduleUnloaded"));

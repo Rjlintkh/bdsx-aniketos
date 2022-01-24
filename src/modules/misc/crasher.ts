@@ -18,7 +18,7 @@ export default class Crasher extends ModuleBase {
 
         punish.generic=Crasher is detected.
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAuthInput), (pk, ni) => {
             if ((pk.moveX > UINT32_MAX && pk.moveZ > UINT32_MAX) || (pk.pos.x > UINT32_MAX && pk.pos.y > UINT32_MAX&& pk.pos.z > UINT32_MAX)) {
