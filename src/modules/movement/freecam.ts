@@ -17,13 +17,18 @@ export default class Freecam extends ModuleBase {
     
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAuthInput), (pk, ni) => {
-            const last = DB.getPlayerData(ni, "Freecam.last") ?? 0;
-            const laternacy = Date.now() - last - Utils.getPing(ni);
-            if (last !== 0 && (laternacy > 1000)) {
-                this.suspect(ni, this.translate("suspect.generic", [laternacy.toString()]));
-                serverInstance.disconnectClient(ni, "disconnectionScreen.timeout");
-            }
-            DB.setPlayerData(ni, Date.now(), "Freecam.last");
+            if (DB.getPlayerData(ni, "Freecam.init")) {
+                const last = DB.getPlayerData(ni, "Freecam.last") ?? 0;
+                const laternacy = Date.now() - last - Utils.getPing(ni);
+                if (last !== 0 && (laternacy > 3000)) {
+                    this.suspect(ni, this.translate("suspect.generic", [laternacy.toString()]));
+                    serverInstance.disconnectClient(ni, "disconnectionScreen.timeout");
+                }
+                DB.setPlayerData(ni, Date.now(), "Freecam.last");
+             }
+        });
+        this.listen(events.packetBefore(MinecraftPacketIds.SetLocalPlayerAsInitialized), (pk, ni) => {
+            DB.setPlayerData(ni, true, "Freecam.init");
         });
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
             if (pk.action === PlayerActionPacket.Actions.Respawn || pk.action === PlayerActionPacket.Actions.DimensionChangeAck) {
