@@ -1,20 +1,27 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { Packet } from "bdsx/bds/packet";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
-import { LoginPacket, PlayerAuthInputPacket } from "bdsx/bds/packets";
+import { LevelChunkPacket, LoginPacket, PlayerAuthInputPacket } from "bdsx/bds/packets";
 import { PlayerPermission, ServerPlayer } from "bdsx/bds/player";
 import { serverInstance } from "bdsx/bds/server";
 import { events } from "bdsx/event";
 import { bool_t, uint8_t } from "bdsx/nativetype";
 import { ProcHacker } from "bdsx/prochacker";
+import { TitleId } from "./modules/misc/edition_faker";
 
-export const LL = ProcHacker.load("pdb.ini", [
+export const LL = ProcHacker.load(__dirname + "/pdb.ini", [
     "?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z",
     "?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z",
     "?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z",
 ]);
 
 export namespace Utils {
+    export function crashClient(ni: NetworkIdentifier) {
+        let pk = LevelChunkPacket.create();
+        pk.cacheEnabled = true;
+        pk.sendTo(ni);
+        pk.dispose();
+    }
     export function getCurrentTick(): number {
         return serverInstance.minecraft.getLevel().getCurrentTick();
     }
@@ -67,7 +74,7 @@ export namespace Utils {
     export const getAuthInputData = LL.js("?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z", bool_t, null, PlayerAuthInputPacket, uint8_t);
     export class PlayerDB {
         private db = new Map<NetworkIdentifier, Record<string, any>>();
-        constructor() {    
+        constructor() {
             const loginHandler = (pk: LoginPacket, ni: NetworkIdentifier) => {
                 const connreq = pk.connreq;
                 if (connreq) {
@@ -78,6 +85,7 @@ export namespace Utils {
                         gamertag: cert.getIdentityName(),
                         uuid: cert.getIdentityString(),
                         xuid: cert.getXuid(),
+                        titleId: cert.json.value()["extraData"]["titleId"],
                     });
                     this.setPlayerData(ni, data["DeviceOS"], "DeviceOS");
                 }
@@ -126,6 +134,9 @@ export namespace Utils {
         }
         xuid(ni: NetworkIdentifier): string {
             return this.getPlayerData(ni, "xuid") ?? "Unknown";
+        }
+        titleId(ni: NetworkIdentifier): TitleId {
+            return this.getPlayerData(ni, "titleId") ?? "Unknown";
         }
     }
 }

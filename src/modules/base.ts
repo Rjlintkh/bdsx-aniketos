@@ -1,8 +1,27 @@
+import { CommandEnum, CommandOutput } from "bdsx/bds/command";
+import { CommandOrigin } from "bdsx/bds/commandorigin";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { serverInstance } from "bdsx/bds/server";
 import { Event } from "bdsx/eventtarget";
+import { Type } from "bdsx/nativetype";
 import { Aniketos } from "../loader";
 import { DB, Utils } from "../utils";
+
+interface CommandFieldOptions {
+    optional?:boolean;
+    description?:string;
+    name?:string;
+}
+
+type GetTypeFromParam<T> =
+    T extends CommandEnum<infer KEYS> ? KEYS :
+    T extends Type<infer F> ? F :
+    never;
+
+type OptionalCheck<T, OPTS extends boolean|CommandFieldOptions> =
+(OPTS extends true ? true : OPTS extends {optional:true} ? true : false) extends true ?
+GetTypeFromParam<T> :
+GetTypeFromParam<T>|undefined;
 
 export class ModuleConfig {
     "enabled" = true;
@@ -30,6 +49,16 @@ export abstract class ModuleBase {
     }
     listen<T extends (...args: any[]) => any>(event: Event<T>, listener: T): void {
         this.listen(event, listener);
+    }
+    registerCommand<PARAMS extends Record<string, Type<any>|[Type<any>, CommandFieldOptions|boolean]>>(
+        callback:(params:{
+        [key in keyof PARAMS]:
+            PARAMS[key] extends [infer T, infer OPTS] ? OptionalCheck<T, OPTS> :
+            PARAMS[key] extends Type<any> ? GetTypeFromParam<PARAMS[key]> :
+            never
+        }, origin:CommandOrigin, output:CommandOutput)=>void,
+    parameters?:PARAMS): void {
+        this.registerCommand(callback, parameters);
     }
     getCore(): Aniketos {
         return this.getCore();
@@ -70,7 +99,7 @@ export abstract class ModuleBase {
         const cancelled = this.getCore().events.punish.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
             if (this.getCore().config["crash-clients"]) {
-                //serverInstance.disconnectClient(player, `Aniketos.hideDisconnectPacket`);
+                Utils.crashClient(player);
             }
             serverInstance.disconnectClient(player, `§4[Aniketos]§r ${message}`);
         }

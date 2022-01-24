@@ -48,7 +48,7 @@ export default class AutoClicker extends ModuleBase {
     click(ni: NetworkIdentifier): boolean {
         const now = Date.now();
 
-        let clicks = DB.getPlayerData(ni, "AutoClicker.clicks") as number[] ?? [];
+        let clicks = <number[]>DB.getPlayerData(ni, "AutoClicker.clicks") ?? [];
 
         clicks = clicks.filter(t => now - t < 1000);
         clicks.push(now);
@@ -56,7 +56,7 @@ export default class AutoClicker extends ModuleBase {
 
         const cps = clicks.length;
         
-        const history = DB.getPlayerData(ni, "AutoClicker.history") as CPSHistory ?? {
+        const history = <CPSHistory>DB.getPlayerData(ni, "AutoClicker.history") ?? {
             last: now,
             history: [{time: now, cps}]
         };
