@@ -1,5 +1,6 @@
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
+import { DB } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
 import { TitleId } from "./edition_faker";
 
@@ -21,7 +22,7 @@ export default class Toolbox extends ModuleBase {
             if (connreq) {
                 const model = connreq.getJsonValue()!["DeviceModel"];
                 const brand = model.split(" ")[0];
-                if (connreq.cert.json.value()["extraData"]["titleId"] !== TitleId.IOS.toString() && brand.toUpperCase() !== brand) {
+                if (DB.titleId(ni) !== TitleId.IOS.toString() && brand.toUpperCase() !== brand) {
                     this.suspect(ni, this.translate("suspect.generic"));
                     this.punish(ni, this.translate("punish.generic"));
                 }

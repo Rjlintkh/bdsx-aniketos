@@ -19,7 +19,9 @@ import Gamemode from "./src/modules/world/gamemode";
 import Give from "./src/modules/world/give";
 import Nuker from "./src/modules/world/nuker";
 import XpOrb from "./src/modules/world/xp_orb";
+import { DB } from "./src/utils";
 
+DB // Import it to make sure it's loaded.
 
 export const aniketos = new Aniketos();
 aniketos.loadModule(new AntiImmobile);
