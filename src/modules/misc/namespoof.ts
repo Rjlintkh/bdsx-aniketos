@@ -20,7 +20,7 @@ export default class Namespoof extends ModuleBase {
 
     load(): void {
         this.listen(events.packetSend(MinecraftPacketIds.PlayStatus), (pk, ni) => {
-            if (pk.status === 3 && DB.titleId(ni) !== TitleId.NINTENDO && DB.titleId(ni) !== TitleId.PLAYSTATION) {
+            if (pk.status === 3 && DB.titleId(ni) !== TitleId.NINTENDO.toString() && DB.titleId(ni) !== TitleId.PLAYSTATION.toString()) {
                 const gamertag = DB.gamertag(ni);
                 const player = ni.getActor()!;
                 const name = player.getName();

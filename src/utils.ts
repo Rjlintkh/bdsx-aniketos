@@ -7,7 +7,6 @@ import { serverInstance } from "bdsx/bds/server";
 import { events } from "bdsx/event";
 import { bool_t, uint8_t } from "bdsx/nativetype";
 import { ProcHacker } from "bdsx/prochacker";
-import { TitleId } from "./modules/misc/edition_faker";
 
 export const LL = ProcHacker.load(__dirname + "/pdb.ini", [
     "?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z",
@@ -135,7 +134,7 @@ export namespace Utils {
         xuid(ni: NetworkIdentifier): string {
             return this.getPlayerData(ni, "xuid") ?? "Unknown";
         }
-        titleId(ni: NetworkIdentifier): TitleId {
+        titleId(ni: NetworkIdentifier): string {
             return this.getPlayerData(ni, "titleId") ?? "Unknown";
         }
     }
