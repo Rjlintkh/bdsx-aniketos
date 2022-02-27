@@ -42,7 +42,7 @@ export default class BadPackets extends ModuleBase {
         {
             this.listen(events.packetBefore(MinecraftPacketIds.MoveActorAbsolute), (pk, ni) => {
                 const player = ni.getActor()!;
-                if (player.isRiding()) {
+                if (!player.isRiding()) {
                     return CANCEL;
                 }
             });

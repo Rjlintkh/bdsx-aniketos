@@ -1,3 +1,4 @@
+import { ContainerType } from "bdsx/bds/inventory";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { MovePlayerPacket } from "bdsx/bds/packets";
 import { events } from "bdsx/event";
@@ -15,10 +16,12 @@ export default class InventoryMove extends ModuleBase {
 
         punish.generic=Do not move when opening inventory screen.
     */};
-    
+
     load(): void {
         this.listen(events.packetSend(MinecraftPacketIds.ContainerOpen), (pk, ni) => {
-            DB.setPlayerData(ni, true, "InventoryMove.open");
+            if (pk.type !== ContainerType.CommandBlock) {
+                DB.setPlayerData(ni, true, "InventoryMove.open");
+            }
         });
         this.listen(events.packetBefore(MinecraftPacketIds.ContainerClose), (pk, ni) => {
             DB.setPlayerData(ni, false, "InventoryMove.open");
