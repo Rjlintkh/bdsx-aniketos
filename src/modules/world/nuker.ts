@@ -1,4 +1,5 @@
 import { Block } from "bdsx/bds/block";
+import { EnchantmentNames, EnchantUtils } from "bdsx/bds/enchants";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { PlayerActionPacket } from "bdsx/bds/packets";
 import { ServerPlayer } from "bdsx/bds/player";
@@ -40,20 +41,25 @@ export default class Nuker extends ModuleBase {
             const ni = event.player.getNetworkIdentifier();
             const tick = DB.getPlayerData(ni, "Nuker.cracking");
             const block = event.blockSource.getBlock(event.blockPos);
-            if (tick) {
-                const ticksNeeded = (this.getDestroyTime(event.player, block)) * 20;
-                const ticksUsed = Utils.getCurrentTick() - tick + 1;
-                
-                if (ticksUsed + (this.getConfig().threshold ?? 0) < ticksNeeded) {
-                    this.suspect(ni, this.translate("suspect.tooFast", [block.getName(), ticksUsed.toString(), ticksNeeded.toString()]));
-                    return CANCEL;
-                }
-            } else {
-                if (!Utils.isCreativeLikeModes(event.player)) {
-                    if (block.blockLegacy.getDestroyTime() !== 0) {
-                        this.suspect(ni, this.translate("suspect.didNotStart", [block.getName()]));
+
+            checks: {
+                const player = ni.getActor()!;
+                if (EnchantUtils.hasEnchant(EnchantmentNames.Efficiency, player.getMainhandSlot())) break checks;
+                if (tick) {
+                    const ticksNeeded = (this.getDestroyTime(event.player, block)) * 20;
+                    const ticksUsed = Utils.getCurrentTick() - tick + 1;
+                    
+                    if (ticksUsed + (this.getConfig().threshold ?? 0) < ticksNeeded) {
+                        this.suspect(ni, this.translate("suspect.tooFast", [block.getName(), ticksUsed.toString(), ticksNeeded.toString()]));
+                        return CANCEL;
                     }
-                    return CANCEL;
+                } else {
+                    if (!Utils.isCreativeLikeModes(event.player)) {
+                        if (block.blockLegacy.getDestroyTime() !== 0) {
+                            this.suspect(ni, this.translate("suspect.didNotStart", [block.getName()]));
+                        }
+                        return CANCEL;
+                    }
                 }
             }
             DB.setPlayerData(ni, 0, "Nuker.cracking");
