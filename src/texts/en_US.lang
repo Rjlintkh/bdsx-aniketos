@@ -90,3 +90,6 @@ modules.BadPackets.description=Detects packets with invalid data and some bug fi
 modules.BadPackets.suspect.chat.messageTooLong=Chat message is longer than 512 characters.
 modules.BadPackets.suspect.chat.invalidType=Chat message is not of type chat.
 modules.BadPackets.suspect.chat.mismatchedNames=Chat author and player name do not match.
+modules.FastEat.name=Fast Eat
+modules.FastEat.description=Prevent players from eating too fast.
+modules.FastEat.suspect.generic=Ate [%1] in [%2] seconds.

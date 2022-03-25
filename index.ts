@@ -15,6 +15,7 @@ import AntiImmobile from "./src/modules/movement/anti_immobile";
 import Flight from "./src/modules/movement/flight";
 import Freecam from "./src/modules/movement/freecam";
 import InventoryMove from "./src/modules/movement/inventory_move";
+import FastEat from "./src/modules/world/fast_eat";
 import Gamemode from "./src/modules/world/gamemode";
 import Give from "./src/modules/world/give";
 import Nuker from "./src/modules/world/nuker";
@@ -29,6 +30,7 @@ aniketos.loadModule(new AutoClicker);
 aniketos.loadModule(new BadPackets);
 aniketos.loadModule(new Crasher);
 aniketos.loadModule(new EditionFaker);
+aniketos.loadModule(new FastEat);
 aniketos.loadModule(new Flight);
 aniketos.loadModule(new Freecam);
 aniketos.loadModule(new Gamemode);
@@ -63,7 +65,7 @@ if (packetLogger) {
                 continue;
         }
         events.packetAfter(i).on((pk: Packet, ni) => {
-            //console.log("RECV", pk, new Date());
+            console.log("RECV", pk, new Date());
         });
         // events.packetSend(i).on((pk: Packet, ni) => {
         //     if (pk.getId() === MinecraftPacketIds.InventoryTransaction) {

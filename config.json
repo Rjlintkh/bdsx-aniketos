@@ -2,6 +2,7 @@
 	"enabled": true,
 	"print-logo": true,
 	"crash-clients": false,
+	"no-console-spam": true,
 	"lang": "en_US",
 	"command": true,
 	"modules": {

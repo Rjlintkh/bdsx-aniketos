@@ -12,10 +12,17 @@ It provides an in-game command to modify config file easily. A whitelist is also
 #### Movement
 - [x] Flight
 - [x] Freecam
-- [ ] Inventory Move
+- [x] Inventory Move
 #### World
-- [x] Give / Enchant / NBT / Rename / Repair
+- [x] Command Block Exploit
+- [x] Give
+- [ ] Dupe
+- [x] Enchant
+- [x] Fast Eat
+- [x] NBT
 - [x] Nuker
+- [x] Rename
+- [x] Repair
 - [x] Xp Orb
 #### Misc
 - [x] Crasher
