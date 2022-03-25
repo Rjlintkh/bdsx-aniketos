@@ -29,7 +29,7 @@ export default class InventoryMove extends ModuleBase {
         this.listen(events.packetAfter(MinecraftPacketIds.PlayerAuthInput), (pk, ni) => {
             if (DB.getPlayerData(ni, "InventoryMove.open")) {
                 const player = ni.getActor()!;
-                const pk = MovePlayerPacket.create();
+                const pk = MovePlayerPacket.allocate();
                 pk.actorId = player.getRuntimeID();
                 pk.pos.x = player.getPosition().x;
                 pk.pos.y = player.getPosition().y;

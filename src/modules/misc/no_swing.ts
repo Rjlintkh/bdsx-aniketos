@@ -5,6 +5,7 @@ import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { DB, Utils } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
+import { TitleId } from "./edition_faker";
 
 export default class NoSwing extends ModuleBase {
 
@@ -21,7 +22,7 @@ export default class NoSwing extends ModuleBase {
         suspect.never=No swing animation was found before action [%s].
         suspect.tooLongAgo=Last swing animation before action [%1] was [%2 ms] ago.
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.Animate), (pk, ni) => {
             if (pk.action === AnimatePacket.Actions.SwingArm) {
@@ -34,6 +35,10 @@ export default class NoSwing extends ModuleBase {
         });
         this.listen(events.packetBefore(MinecraftPacketIds.LevelSoundEvent), (pk, ni) => {
             if (pk.sound === 42 && !pk.disableRelativeVolume) {
+                const titleId = DB.titleId(ni);
+                if (titleId === "Unknown") return;
+                if (titleId === TitleId.ANDROID.toString()) return;
+                if (titleId === TitleId.IOS.toString()) return;
                 if (this.check(ni, this.translate("action.hitAir"))) return CANCEL;
             }
         });

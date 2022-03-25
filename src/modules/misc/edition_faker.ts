@@ -1,5 +1,5 @@
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
-import { DeviceOS } from "bdsx/common";
+import { BuildPlatform } from "bdsx/common";
 import { events } from "bdsx/event";
 import { ModuleBase, ModuleConfig } from "../base";
 
@@ -31,8 +31,8 @@ export default class EditionFaker extends ModuleBase {
                 const cert = connreq.cert;
                 const titleId = cert.json.value()["extraData"]["titleId"];
                 const system = connreq.getJsonValue()!["DeviceOS"];
-                if (TitleId[titleId] && TitleId[DeviceOS[system] as any] != titleId) {
-                    this.suspect(ni, this.translate("suspect.overriden", [TitleId[titleId], DeviceOS[system]]));
+                if (TitleId[titleId] && TitleId[BuildPlatform[system] as any] != titleId) {
+                    this.suspect(ni, this.translate("suspect.overriden", [TitleId[titleId], BuildPlatform[system]]));
                     this.punish(ni, this.translate("punish.generic"));
                 }
             }

@@ -26,7 +26,7 @@ export default class Gamemode extends ModuleBase {
                 this.punish(ni, this.translate("punish.generic"));
             } else {
                 serverInstance.nextTick().then(() => {
-                    const pk = SetPlayerGameTypePacket.create();
+                    const pk = SetPlayerGameTypePacket.allocate();
                     pk.playerGameType = gameType;
                     pk.sendTo(ni);
                     pk.dispose();

@@ -53,11 +53,11 @@ export default class Give extends ModuleBase {
         {
             const original = LL.hooking("?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z", void_t, null, InventoryTransaction, InventoryAction)
             ((transaction, action) => {
-                if (action.source.type === InventorySourceType.NonImplementedFeatureTODO && action.source.containerId as any !== -5) {
-                    action.source.type = InventorySourceType.ContainerInventory;
+                if (action.source.type === InventorySourceType.NonImplementedFeatureTODO && <number>action.source.containerId !== -5) {
+                    action.source.type = InventorySourceType.InvalidInventory;
                     this.broadcast(this.translate("broadcast.cancelled"));
                 }
-                return original(transaction, action);;
+                return original(transaction, action);
             });
         }
     }

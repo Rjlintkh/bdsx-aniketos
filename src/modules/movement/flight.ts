@@ -27,14 +27,14 @@ export default class Flight extends ModuleBase {
         suspect.clientGlide=Invoked gliding action from client, possibly Toolbox Elytra Fly.
         suspect.invalidPositionMode=Invalid player position mode [144], possibly Zephyr HiveFly.
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.AdventureSettings), (pk, ni) => {
             if ((pk.flag1 & Flag1.AllowFlight) && (pk.flag1 & Flag1.Flying)) {
                 const player = ni.getActor()!;
                 const abilities = player.abilities;
                 if (!abilities.getAbility(AbilitiesIndex.MayFly).value.boolVal) {
-                    player.syncAbilties();
+                    player.syncAbilities();
                     this.suspect(ni, this.translate("suspect.mismatchedAbilities"));
                     return CANCEL;
                 }
