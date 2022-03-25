@@ -14,7 +14,7 @@ export default class Freecam extends ModuleBase {
 
         suspect.generic=Client stopped sending movement packets for [%s ms].
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAuthInput), (pk, ni) => {
             if (DB.getPlayerData(ni, "Freecam.init")) {
@@ -31,7 +31,9 @@ export default class Freecam extends ModuleBase {
             DB.setPlayerData(ni, true, "Freecam.init");
         });
         this.listen(events.packetBefore(MinecraftPacketIds.PlayerAction), (pk, ni) => {
-            if (pk.action === PlayerActionPacket.Actions.Respawn || pk.action === PlayerActionPacket.Actions.DimensionChangeAck) {
+            if (pk.action === PlayerActionPacket.Actions.Respawn ||
+                pk.action === PlayerActionPacket.Actions.DimensionChangeAck ||
+                pk.action === PlayerActionPacket.Actions.StopSleeping) {
                 DB.setPlayerData(ni, 0, "Freecam.last");
             }
         });
