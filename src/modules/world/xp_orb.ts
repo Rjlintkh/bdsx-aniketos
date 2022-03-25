@@ -23,10 +23,8 @@ export default class XpOrb extends ModuleBase {
         });
         this.listen(events.packetBefore(MinecraftPacketIds.ActorEvent), (pk, ni) => {
             if (pk.event === ActorEventPacket.Events.PlayerAddXpLevels) {
-                if (pk.data === 100) {
-                    this.suspect(ni, this.translate("suspect.level", ["100"]));
-                    return CANCEL;
-                }
+                this.suspect(ni, this.translate("suspect.level", [pk.data+""]));
+                return CANCEL;
             }
         });
     }
