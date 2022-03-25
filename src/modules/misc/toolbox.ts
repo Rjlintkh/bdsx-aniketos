@@ -22,7 +22,7 @@ export default class Toolbox extends ModuleBase {
             if (connreq) {
                 const model = connreq.getJsonValue()!["DeviceModel"];
                 const brand = model.split(" ")[0];
-                if (DB.titleId(ni) !== TitleId.IOS.toString() && DB.titleId(ni) !== TitleId.NINTENDO.toString() && brand.toUpperCase() !== brand) {
+                if (DB.titleId(ni) !== TitleId.IOS.toString() && DB.titleId(ni) !== TitleId.NINTENDO.toString() && DB.titleId(ni) !== TitleId.PLAYSTATION.toString() && brand.toUpperCase() !== brand) {
                     this.suspect(ni, this.translate("suspect.generic"));
                     this.punish(ni, this.translate("punish.generic"));
                 }
