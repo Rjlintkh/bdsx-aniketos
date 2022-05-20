@@ -3,16 +3,10 @@ import { Packet } from "bdsx/bds/packet";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { LevelChunkPacket, LoginPacket, PlayerAuthInputPacket } from "bdsx/bds/packets";
 import { PlayerPermission, ServerPlayer } from "bdsx/bds/player";
-import { serverInstance } from "bdsx/bds/server";
 import { events } from "bdsx/event";
+import { bedrockServer } from "bdsx/launcher";
 import { bool_t, uint8_t } from "bdsx/nativetype";
-import { ProcHacker } from "bdsx/prochacker";
-
-export const LL = ProcHacker.load(__dirname + "/pdb.ini", [
-    "?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z",
-    "?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z",
-    "?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z",
-]);
+import { procHacker } from "bdsx/prochacker";
 
 export namespace Utils {
     export function crashClient(ni: NetworkIdentifier) {
@@ -22,25 +16,25 @@ export namespace Utils {
         pk.dispose();
     }
     export function getCurrentTick(): number {
-        return serverInstance.minecraft.getLevel().getCurrentTick();
+        return bedrockServer.level.getCurrentTick();
     }
     export function getOnlineOperators(): ServerPlayer[] {
-        return serverInstance.getPlayers().filter(p => p.getPermissionLevel() === PlayerPermission.OPERATOR);
+        return bedrockServer.serverInstance.getPlayers().filter(p => p.getPermissionLevel() === PlayerPermission.OPERATOR);
     }
     export function isCreativeLikeModes(player: ServerPlayer) {
         const mode = player.getGameType();
         return mode === 1 || mode === 4;
     }
     export function broadcastPacket(pk: Packet) {
-        for (const player of serverInstance.getPlayers()) {
+        for (const player of bedrockServer.serverInstance.getPlayers()) {
             player.sendPacket(pk);
         }
     }
     export function getPing(ni: NetworkIdentifier) {
         if (ni.toString().split("|")[0] === "127.0.0.1") {
-            return serverInstance.networkHandler.instance.peer.GetLastPing(ni.address) - 30;
+            return bedrockServer.rakPeer.GetLastPing(ni.address) - 30;
         }
-        return serverInstance.networkHandler.instance.peer.GetLastPing(ni.address);
+        return bedrockServer.rakPeer.GetLastPing(ni.address);
     }
     export function formatString(str: string,  params:string[] = []) {
         if (params.length === 0) {
@@ -70,7 +64,7 @@ export namespace Utils {
         }
         return ret.join("%");
     }
-    export const getAuthInputData = LL.js("?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z", bool_t, null, PlayerAuthInputPacket, uint8_t);
+    export const getAuthInputData = procHacker.js("?getInput@PlayerAuthInputPacket@@QEBA_NW4InputData@1@@Z", bool_t, null, PlayerAuthInputPacket, uint8_t);
     export class PlayerDB {
         private db = new Map<NetworkIdentifier, Record<string, any>>();
         constructor() {

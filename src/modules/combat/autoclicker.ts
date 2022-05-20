@@ -23,13 +23,13 @@ export default class AutoClicker extends ModuleBase {
     /*
         name=Auto Clicker
         description=Checks if players are clicking too fast or consistently.
-        
+
         suspect.tooFast=Clicking too fast at [%s CPS].
         suspect.tooConsistently=Clicking too consistently at [%s CPS].
-        
+
         warning.tooFast=Please slow down, you are clicking too fast.
     */};
-    
+
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.LevelSoundEvent), (pk, ni) => {
             if (pk.sound === 42 && !pk.disableRelativeVolume) {
@@ -37,7 +37,7 @@ export default class AutoClicker extends ModuleBase {
             }
         });
         this.listen(events.packetBefore(MinecraftPacketIds.InventoryTransaction), (pk, ni) => {
-            if (pk.transaction.isItemUseOnEntityTransaction()) {
+            if (pk.transaction?.isItemUseOnEntityTransaction()) {
                 if (this.click(ni)) return CANCEL;
             }
         });
@@ -55,7 +55,7 @@ export default class AutoClicker extends ModuleBase {
         DB.setPlayerData(ni, clicks, "AutoClicker.clicks");
 
         const cps = clicks.length;
-        
+
         const history = <CPSHistory>DB.getPlayerData(ni, "AutoClicker.history") ?? {
             last: now,
             history: [{time: now, cps}]

@@ -40,7 +40,7 @@ export abstract class ModuleBase {
             description: this.translate("description")
         }
     }
-    
+
     translate(str: string, params: string[] = []): string {
         return this.translate(str, params);
     }
@@ -103,5 +103,5 @@ export abstract class ModuleBase {
             }
             serverInstance.disconnectClient(player, `§4[Aniketos]§r ${message}`);
         }
-    }    
+    }
 }

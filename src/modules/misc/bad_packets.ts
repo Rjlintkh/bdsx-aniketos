@@ -5,7 +5,7 @@ import { ServerPlayer } from "bdsx/bds/player";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { bool_t, int32_t, void_t } from "bdsx/nativetype";
-import { LL } from "../../utils";
+import { procHacker } from "bdsx/prochacker";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class BadPackets extends ModuleBase {
@@ -48,7 +48,7 @@ export default class BadPackets extends ModuleBase {
             });
         }
         {
-            const original = LL.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z", void_t, null, ServerPlayer, int32_t, bool_t)
+            const original = procHacker.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z", void_t, null, ServerPlayer, int32_t, bool_t)
             ((player, dimensionId: DimensionId, useNetherPortal) => {
                 // if (useNetherPortal && (player.getSleepTimer() > 0)) {
                 if (useNetherPortal && player.isSleeping()) {

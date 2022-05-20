@@ -15,7 +15,7 @@ export default class FastEat extends ModuleBase {
     */};
     load(): void {
         this.listen(events.packetBefore(MinecraftPacketIds.InventoryTransaction), (pk, ni) => {
-            if (pk.transaction.isItemUseTransaction() && pk.transaction.actionType === ItemUseInventoryTransaction.ActionType.Use) {
+            if (pk.transaction?.isItemUseTransaction() && pk.transaction.actionType === ItemUseInventoryTransaction.ActionType.Use) {
                 const player = ni.getActor()!;
                 player.setAttribute(AttributeId.PlayerHunger, player.getAttribute(AttributeId.PlayerHunger));
             }

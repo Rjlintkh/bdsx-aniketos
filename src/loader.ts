@@ -103,7 +103,7 @@ export class Aniketos {
         command.output.moduleDisable=Module %s has been disabled.
         command.output.moduleReload=Reloaded all modules.
         command.output.configChange=%s has been changed.
-        
+
         module.command.desc.generic=Configures module %s of Aniketos.
     */};
 
@@ -135,7 +135,7 @@ export class Aniketos {
             // Evil stuff
             let lastLog = "";
             let spamCount = 1;
-            
+
             const original = process.stdout.write.bind(process.stdout);
             process.stdout.write = (buffer: string, db: any) => {
                 if (typeof buffer === "string" && lastLog === buffer && buffer.startsWith("Aniketos".red)) {
@@ -163,7 +163,7 @@ export class Aniketos {
                     } else {
                         output.error(this.translate("base.command.error.configSave"));
                     }
-                }, { action: command.enum("aniketos.config", { "config": 0 }), key: command.enum("Key", 
+                }, { action: command.enum("aniketos.config", { "config": 0 }), key: command.enum("Key",
                     {
                         "whitelist-ops": "whitelist-ops",
                         "console-log-suspect": "console-log-suspect",
@@ -332,7 +332,7 @@ export class Aniketos {
                     if (DB.uuid(player) === entry.value) {
                         return true;
                     }
-                    break;  
+                    break;
                 case "xuid":
                     if (DB.xuid(player) === entry.value) {
                         return true;
@@ -344,9 +344,9 @@ export class Aniketos {
     }
 
     listen<T extends (...args: any[]) => any>(event: Event<T>, listener: T): void {
-        event.on(listener);
+        event.on(listener as any);
         events.serverStop.on(() => {
-            event.remove(listener);
+            event.remove(listener as any);
         });
     }
 
@@ -369,7 +369,7 @@ export class Aniketos {
             module.translate = (str, params) => this.translate(`modules.${name}.${str}`, params);
             module.log = message => this.log(module.info().name.magenta + " " + message);
             module.listen = <T extends (...args: any[]) => any>(event: Event<T>, listener: T): void => {
-                event.on(listener);
+                event.on(listener as any);
                 _module.listeners.push([event, listener]);
             };
             module.registerCommand = (callback, parameters) => {

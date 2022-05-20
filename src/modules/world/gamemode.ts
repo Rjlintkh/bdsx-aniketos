@@ -1,8 +1,8 @@
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { SetPlayerGameTypePacket } from "bdsx/bds/packets";
-import { serverInstance } from "bdsx/bds/server";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
+import { bedrockServer } from "bdsx/launcher";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class Gamemode extends ModuleBase {
@@ -25,7 +25,7 @@ export default class Gamemode extends ModuleBase {
             if (this.getConfig().punish) {
                 this.punish(ni, this.translate("punish.generic"));
             } else {
-                serverInstance.nextTick().then(() => {
+                bedrockServer.serverInstance.nextTick().then(() => {
                     const pk = SetPlayerGameTypePacket.allocate();
                     pk.playerGameType = gameType;
                     pk.sendTo(ni);
