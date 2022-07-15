@@ -1,6 +1,6 @@
 {
   "name": "@bdsx/aniketos",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "An anti-cheat plugin for bdsx",
   "main": "index.js",
   "keywords": [],

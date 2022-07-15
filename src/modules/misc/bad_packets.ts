@@ -4,7 +4,7 @@ import { TextPacket } from "bdsx/bds/packets";
 import { ServerPlayer } from "bdsx/bds/player";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
-import { bool_t, int32_t, void_t } from "bdsx/nativetype";
+import { int32_t, void_t } from "bdsx/nativetype";
 import { procHacker } from "bdsx/prochacker";
 import { ModuleBase, ModuleConfig } from "../base";
 
@@ -42,20 +42,14 @@ export default class BadPackets extends ModuleBase {
         {
             this.listen(events.packetBefore(MinecraftPacketIds.MoveActorAbsolute), (pk, ni) => {
                 const player = ni.getActor()!;
-                if (!player.isRiding()) {
-                    return CANCEL;
-                }
+                if (!player.isRiding()) return CANCEL;
             });
         }
         {
-            const original = procHacker.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@_N@Z", void_t, null, ServerPlayer, int32_t, bool_t)
-            ((player, dimensionId: DimensionId, useNetherPortal) => {
-                // if (useNetherPortal && (player.getSleepTimer() > 0)) {
-                if (useNetherPortal && player.isSleeping()) {
-                    // player.stopSleepInBed(true, true);
-                    player.setSleeping(false);
-                }
-                return original(player, dimensionId, useNetherPortal);
+            const original = procHacker.hooking("?changeDimension@ServerPlayer@@UEAAXV?$AutomaticID@VDimension@@H@@@Z", void_t, null, ServerPlayer, int32_t)
+            ((player, dimensionId: DimensionId) => {
+                if (player.isSleeping()) player.setSleeping(false);
+                return original(player, dimensionId);
             });
         }
     }

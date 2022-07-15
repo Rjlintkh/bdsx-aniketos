@@ -2,8 +2,8 @@ import { InventoryAction, InventorySourceType, InventoryTransaction } from "bdsx
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
 import { void_t } from "bdsx/nativetype";
+import { procHacker } from "bdsx/prochacker";
 import { hex } from "bdsx/util";
-import { LL } from "../../utils";
 import { ModuleBase, ModuleConfig } from "../base";
 
 export default class Give extends ModuleBase {
@@ -51,7 +51,7 @@ export default class Give extends ModuleBase {
             }
         });
         {
-            const original = LL.hooking("?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z", void_t, null, InventoryTransaction, InventoryAction)
+            const original = procHacker.hooking("?addAction@InventoryTransaction@@QEAAXAEBVInventoryAction@@@Z", void_t, null, InventoryTransaction, InventoryAction)
             ((transaction, action) => {
                 if (action.source.type === InventorySourceType.NonImplementedFeatureTODO && <number>action.source.containerId !== -5) {
                     action.source.type = InventorySourceType.InvalidInventory;
