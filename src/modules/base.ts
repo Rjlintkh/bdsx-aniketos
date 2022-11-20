@@ -1,8 +1,10 @@
-import { CommandEnum, CommandOutput } from "bdsx/bds/command";
+import { CommandOutput } from "bdsx/bds/command";
 import { CommandOrigin } from "bdsx/bds/commandorigin";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { serverInstance } from "bdsx/bds/server";
+import { PlayerPermission, ServerPlayer } from "bdsx/bds/player";
+import { CommandEnum } from "bdsx/commandenum";
 import { Event } from "bdsx/eventtarget";
+import { bedrockServer } from "bdsx/launcher";
 import { Type } from "bdsx/nativetype";
 import { Aniketos } from "../loader";
 import { DB, Utils } from "../utils";
@@ -70,6 +72,31 @@ export abstract class ModuleBase {
         return this.setConfig(config);
     }
 
+    checkWhitelisted(ni: NetworkIdentifier): boolean {
+        const whitelistOps = this.getCore().config["whitelist-ops"];
+        const player = <ServerPlayer>ni.getActor();
+        if (player.getPermissionLevel() === PlayerPermission.OPERATOR && whitelistOps) return true;
+
+        const whitelist = this.getCore().config["whitelist"];
+        for (const entry of whitelist) {
+            switch (entry.type) {
+                case "address":
+                    if (entry.value === DB.address(ni)) return true;
+                    break;
+                case "xuid":
+                    if (entry.value === DB.xuid(ni)) return true;
+                    break;
+                case "gamertag":
+                    if (entry.value === DB.gamertag(ni)) return true;
+                    break;
+                case "uuid":
+                    if (entry.value === DB.uuid(ni)) return true;
+                    break;
+            }
+        }
+        return false;
+    }
+
     broadcast(message: string): void {
         const ops = Utils.getOnlineOperators();
         for (const op of ops) {
@@ -78,6 +105,7 @@ export abstract class ModuleBase {
         this.log(`${this.getCore().translate("base.message.broadcast")} ${message}`);
     }
     suspect(player: NetworkIdentifier, message: string): void {
+        if (this.checkWhitelisted(player)) return;
         const cancelled = this.getCore().events.suspect.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
             const ops = Utils.getOnlineOperators();
@@ -90,18 +118,20 @@ export abstract class ModuleBase {
         }
     }
     warn(player: NetworkIdentifier, message: string): void {
+        if (this.checkWhitelisted(player)) return;
         const cancelled = this.getCore().events.warn.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
             player.getActor()!.sendMessage(`§4[Aniketos] §5[${this.info().name}]§r ${this.getCore().translate("base.message.warning")} ${message}`);
         }
     }
     punish(player: NetworkIdentifier, message: string): void {
+        if (this.checkWhitelisted(player)) return;
         const cancelled = this.getCore().events.punish.fire(new Aniketos.ModuleEvent(player, this, message));
         if (!cancelled) {
             if (this.getCore().config["crash-clients"]) {
                 Utils.crashClient(player);
             }
-            serverInstance.disconnectClient(player, `§4[Aniketos]§r ${message}`);
+            bedrockServer.serverInstance.disconnectClient(player, `§4[Aniketos]§r ${message}`);
         }
     }
 }

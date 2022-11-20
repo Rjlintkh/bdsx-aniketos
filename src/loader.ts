@@ -1,6 +1,3 @@
-import fs = require("fs");
-import vm = require("vm");
-import path = require("path");
 import { CommandPermissionLevel } from "bdsx/bds/command";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { serverInstance } from "bdsx/bds/server";
@@ -10,6 +7,9 @@ import { events } from "bdsx/event";
 import { Event } from "bdsx/eventtarget";
 import { bedrockServer } from "bdsx/launcher";
 import { bool_t, CxxString } from "bdsx/nativetype";
+import * as fs from "fs";
+import * as path from "path";
+import * as vm from "vm";
 import { ModuleBase, ModuleConfig } from "./modules/base";
 import { DB, Utils } from "./utils";
 var JSONC = require("comment-json");
