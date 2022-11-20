@@ -1,0 +1,4 @@
+*.ts
+/releases
+make_release.bat
+config.json

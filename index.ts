@@ -1,4 +1,3 @@
-import { Packet } from "bdsx/bds/packet";
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { events } from "bdsx/event";
 import { Aniketos } from "./src/loader";
@@ -64,7 +63,7 @@ if (packetLogger) {
             case MinecraftPacketIds.SetActorMotion:
                 continue;
         }
-        events.packetAfter(i).on((pk: Packet, ni) => {
+        events.packetAfter(i).on((pk: any, ni) => {
             console.log("RECV", pk, new Date());
         });
         // events.packetSend(i).on((pk: Packet, ni) => {

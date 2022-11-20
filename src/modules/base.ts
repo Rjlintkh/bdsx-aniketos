@@ -55,7 +55,7 @@ export abstract class ModuleBase {
     registerCommand<PARAMS extends Record<string, Type<any>|[Type<any>, CommandFieldOptions|boolean]>>(
         callback:(params:{
         [key in keyof PARAMS]:
-            PARAMS[key] extends [infer T, infer OPTS] ? OptionalCheck<T, OPTS> :
+            PARAMS[key] extends [infer T, infer OPTS extends boolean | CommandFieldOptions] ? OptionalCheck<T, OPTS> :
             PARAMS[key] extends Type<any> ? GetTypeFromParam<PARAMS[key]> :
             never
         }, origin:CommandOrigin, output:CommandOutput)=>void,

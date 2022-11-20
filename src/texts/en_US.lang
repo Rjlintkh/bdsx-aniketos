@@ -94,3 +94,6 @@ modules.FastEat.name=Fast Eat
 modules.FastEat.description=Prevent players from eating too fast.
 modules.FastEat.suspect.generic=Ate [%1] in [%2] seconds.
 modules.Nuker.suspect.tooMany=Destroyed [%1] blocks in [%2 ticks].
+modules.Crasher.suspect.arrayTooLong=Purchase Receipt packet with too many entries.
+modules.Crasher.suspect.type1=Horion Type 1 Crasher
+modules.Crasher.suspect.type2=Horion Type 2 Crasher
